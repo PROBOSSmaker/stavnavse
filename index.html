@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0F0F0F">
+<title>Ставь на всё</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Основа */
+    --graphite: #0F0F0F;
+    --coal: #1C1C1C;
+    --cocoa: #4A3B31;
+    /* Бренд */
+    --bronze: #8C6A4F;
+    --latte: #C7B299;
+    --cream: #F2E8DA;
+    /* Действие */
+    --copper: #E0874A;
+    --yes: #8FC79A;
+    --no: #E0745F;
+
+    --display: 'Unbounded', system-ui, sans-serif;
+    --text: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --safe-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px));
+    --safe-bottom: var(--tg-safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { background: var(--graphite); color: var(--cream); }
+
+  body {
+    font-family: var(--text);
+    font-size: 16px;
+    line-height: 1.45;
+    min-height: var(--tg-viewport-stable-height, 100vh);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    background:
+      radial-gradient(120% 55% at 50% -12%, rgba(140, 106, 79, .22), transparent 62%),
+      var(--graphite);
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 28px);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* Плашка «открыто в браузере» */
+  .open-tg {
+    align-self: flex-start;
+    font-size: 12.5px;
+    color: var(--latte);
+    text-decoration: none;
+    border: 1px solid var(--cocoa);
+    border-radius: 999px;
+    padding: 6px 12px;
+  }
+  .open-tg b { color: var(--cream); font-weight: 600; }
+
+  /* Логотип */
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .mark { width: 62px; height: auto; flex: none; }
+  .wordmark {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 24px;
+    line-height: 1.02;
+    letter-spacing: .01em;
+  }
+  .wordmark span { color: var(--latte); }
+  .tagline {
+    margin-top: 7px;
+    font-size: 10.5px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--latte);
+    opacity: .75;
+  }
+
+  /* Приветствие */
+  .hello h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1.15;
+  }
+  .hello p { margin-top: 10px; color: var(--latte); }
+
+  /* Банк */
+  .bank {
+    position: relative;
+    overflow: hidden;
+    background: var(--coal);
+    border: 1px solid var(--cocoa);
+    border-radius: 22px;
+    padding: 20px;
+  }
+  .bank .label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--latte);
+    opacity: .8;
+  }
+  .amount { margin-top: 10px; display: flex; align-items: baseline; gap: 8px; }
+  .amount .num {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 52px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .amount .cur { color: var(--latte); font-size: 16px; }
+  .bank .note { margin-top: 14px; font-size: 14px; color: var(--latte); opacity: .85; max-width: 68%; position: relative; }
+  .bank .ghost {
+    position: absolute;
+    right: -34px;
+    bottom: -40px;
+    width: 128px;
+    opacity: .35;
+    pointer-events: none;
+  }
+
+  /* Как это работает */
+  .how h2 {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--latte);
+    opacity: .8;
+    margin-bottom: 4px;
+  }
+  .how ol { list-style: none; }
+  .how li {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 14px;
+    padding: 14px 0;
+  }
+  .how li + li { border-top: 1px solid rgba(74, 59, 49, .65); }
+  .how .n {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--cocoa);
+    display: grid;
+    place-items: center;
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--latte);
+  }
+  .how b { display: block; font-weight: 600; font-size: 16px; }
+  .how p { margin-top: 3px; font-size: 14.5px; color: var(--latte); }
+
+  .pill {
+    display: inline-block;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 22px;
+    vertical-align: 1px;
+  }
+  .pill.yes { color: var(--yes); background: rgba(143, 199, 154, .12); border: 1px solid rgba(143, 199, 154, .35); }
+  .pill.no  { color: var(--no);  background: rgba(224, 116, 95, .12);  border: 1px solid rgba(224, 116, 95, .35); }
+
+  /* Главная кнопка */
+  .btn {
+    width: 100%;
+    height: 56px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--copper);
+    color: var(--graphite);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: .01em;
+    cursor: pointer;
+    box-shadow: 0 12px 30px -14px rgba(224, 135, 74, .7);
+    transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:active { transform: scale(.98); filter: brightness(.95); }
+  .fine { margin-top: 12px; text-align: center; font-size: 13px; color: var(--latte); opacity: .7; }
+
+  /* Тост */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(var(--safe-bottom) + 24px);
+    width: calc(100% - 40px);
+    max-width: 440px;
+    transform: translate(-50%, 16px);
+    opacity: 0;
+    pointer-events: none;
+    background: var(--coal);
+    border: 1px solid var(--cocoa);
+    border-radius: 14px;
+    padding: 13px 16px;
+    font-size: 14.5px;
+    color: var(--cream);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* Появление */
+  .rise {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: rise .6s cubic-bezier(.2, .7, .2, 1) forwards;
+    animation-delay: var(--d, 0s);
+  }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .rise { animation: none; opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="app">
+    <a id="openTg" class="open-tg" href="https://t.me/stavnavsebot?startapp" hidden>
+      Открыто в браузере. В Telegram: <b>@stavnavsebot</b>
+    </a>
+
+    <header class="brand rise">
+      <svg class="mark" viewBox="0 0 96 84" aria-hidden="true">
+        <defs>
+          <clipPath id="front"><rect x="34" y="28" width="58" height="42" rx="13"/></clipPath>
+        </defs>
+        <!-- первая сторона спора -->
+        <rect x="4" y="4" width="58" height="42" rx="13" fill="#C7B299"/>
+        <path d="M14 40 L10 58 L30 44 Z" fill="#C7B299"/>
+        <!-- вторая сторона спора -->
+        <rect x="34" y="28" width="58" height="42" rx="13" fill="#8C6A4F"/>
+        <path d="M82 64 L88 82 L66 68 Z" fill="#8C6A4F"/>
+        <!-- перекрытие: общий банк -->
+        <rect x="4" y="4" width="58" height="42" rx="13" fill="#4A3B31" clip-path="url(#front)"/>
+        <!-- галочка-пруф -->
+        <path d="M38.5 37 L46 44.5 L59.5 31" fill="none" stroke="#E0874A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div>
+        <div class="wordmark">СТАВЬ<br>НА <span>ВСЁ</span></div>
+        <div class="tagline">Докажи, что ты прав</div>
+      </div>
+    </header>
+
+    <section class="hello rise" style="--d:.08s">
+      <h1 id="hello">Привет!</h1>
+      <p>Здесь спорят по-честному: ставки замораживаются, пока не станет ясно, кто прав.</p>
+    </section>
+
+    <section class="bank rise" style="--d:.16s">
+      <div class="label">Стартовый банк</div>
+      <div class="amount"><span class="num" id="balance">500</span><span class="cur">виртов</span></div>
+      <p class="note">Игровая валюта: её нельзя купить или вывести. Спорим на интерес.</p>
+      <svg class="ghost" viewBox="0 0 96 84" aria-hidden="true" fill="none" stroke="#8C6A4F" stroke-width="2" stroke-linejoin="round">
+        <path d="M17 4 H49 A13 13 0 0 1 62 17 V33 A13 13 0 0 1 49 46 H28 L10 58 L14 44.5 A13 13 0 0 1 4 33 V17 A13 13 0 0 1 17 4 Z"/>
+        <path d="M47 28 H79 A13 13 0 0 1 92 41 V57 A13 13 0 0 1 82 69.5 L88 82 L68 70 H47 A13 13 0 0 1 34 57 V41 A13 13 0 0 1 47 28 Z"/>
+      </svg>
+    </section>
+
+    <section class="how rise" style="--d:.24s">
+      <h2>Как это работает</h2>
+      <ol>
+        <li>
+          <span class="n">1</span>
+          <div><b>Создай спор</b><p>Условие, ссылка на источник и ставка. Без лишних слов.</p></div>
+        </li>
+        <li>
+          <span class="n">2</span>
+          <div><b>Позови друзей</b><p>До пяти человек, каждый выбирает сторону: <span class="pill yes">Да</span> или <span class="pill no">Нет</span></p></div>
+        </li>
+        <li>
+          <span class="n">3</span>
+          <div><b>Узнайте, кто прав</b><p>Все согласны с итогом — банк делится сразу. Нет — смотрим источник и решаем.</p></div>
+        </li>
+      </ol>
+    </section>
+
+    <div class="rise" style="--d:.32s">
+      <button id="start" class="btn" type="button">Создать первый спор</button>
+      <p class="fine">Спорь на интерес, а не на нервы.</p>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+  (function () {
+    var tg = window.Telegram && window.Telegram.WebApp;
+    var inTelegram = !!(tg && tg.initData);
+
+    function atLeast(v) {
+      return !!(tg && tg.isVersionAtLeast && tg.isVersionAtLeast(v));
+    }
+
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      try { if (atLeast('6.1')) tg.setBackgroundColor('#0F0F0F'); } catch (e) {}
+      try { if (atLeast('6.9')) tg.setHeaderColor('#0F0F0F'); } catch (e) {}
+      try { if (atLeast('7.10')) tg.setBottomBarColor('#0F0F0F'); } catch (e) {}
+    }
+
+    // Имя из Telegram
+    var user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+    if (user && user.first_name) {
+      document.getElementById('hello').textContent = 'Привет, ' + user.first_name + '!';
+    }
+
+    // Подсказка, если страницу открыли не в Telegram
+    if (!inTelegram) document.getElementById('openTg').hidden = false;
+
+    // Счётчик баланса
+    var balance = document.getElementById('balance');
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce) {
+      balance.textContent = '0';
+      setTimeout(function () {
+        var t0 = performance.now(), dur = 900;
+        (function step(now) {
+          var p = Math.min(1, (now - t0) / dur);
+          balance.textContent = Math.round(500 * (1 - Math.pow(1 - p, 3)));
+          if (p < 1) requestAnimationFrame(step);
+        })(t0);
+      }, 350);
+    }
+
+    function haptic(style) {
+      try { if (atLeast('6.1')) tg.HapticFeedback.impactOccurred(style); } catch (e) {}
+    }
+
+    var toastEl = document.getElementById('toast'), toastTimer;
+    function toast(text) {
+      toastEl.textContent = text;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
+    }
+
+    document.getElementById('start').addEventListener('click', function () {
+      haptic('medium');
+      toast('Почти готово: создание споров подъедет в следующей версии.');
+    });
+  })();
+</script>
+</body>
+</html>
