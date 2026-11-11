@@ -48,6 +48,7 @@
   }
 
   button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: inherit; }
+  [hidden] { display: none !important; }
 
   .screen {
     max-width: 480px;
@@ -75,6 +76,9 @@
   }
   .t-yes { color: var(--yes); }
   .t-no { color: var(--no); }
+  .hint { font-size: 12.5px; color: var(--latte); opacity: .8; line-height: 1.4; }
+  .hint.center { text-align: center; }
+  .fine { margin-top: 12px; text-align: center; font-size: 13px; color: var(--latte); opacity: .7; line-height: 1.45; }
 
   /* ---------- Кнопки ---------- */
   .btn {
@@ -90,9 +94,10 @@
     letter-spacing: .01em;
     text-align: center;
     box-shadow: 0 12px 30px -14px rgba(224, 135, 74, .7);
-    transition: transform .12s ease, filter .12s ease;
+    transition: transform .12s ease, filter .12s ease, opacity .2s ease;
   }
   .btn:active { transform: scale(.98); filter: brightness(.95); }
+  .btn.off { opacity: .45; box-shadow: none; }
   .btn.ghost {
     height: 50px;
     background: transparent;
@@ -102,6 +107,8 @@
     font-weight: 600;
     box-shadow: none;
   }
+  .btn.danger { background: var(--no); box-shadow: 0 12px 30px -14px rgba(224, 116, 95, .7); }
+  .stack { display: flex; flex-direction: column; gap: 10px; }
   .back {
     align-self: flex-start;
     display: inline-flex;
@@ -111,6 +118,8 @@
     color: var(--latte);
     padding: 4px 0;
   }
+  .link-danger { align-self: center; color: var(--no); font-size: 14.5px; font-weight: 600; padding: 8px 12px; }
+  .link-muted { align-self: center; color: var(--latte); opacity: .7; font-size: 13.5px; padding: 6px 12px; }
 
   /* ---------- Аватарки ---------- */
   .ava {
@@ -159,6 +168,7 @@
     border: 1px solid var(--cocoa);
     border-radius: 14px;
   }
+  .seg.seg4 { grid-template-columns: repeat(4, 1fr); }
   .seg button {
     height: 38px;
     border-radius: 10px;
@@ -171,6 +181,7 @@
     color: var(--latte);
     transition: background .2s ease, color .2s ease;
   }
+  .seg.seg4 button { font-family: var(--display); font-weight: 700; font-size: 15px; height: 42px; }
   .seg button.on { background: var(--cocoa); color: var(--cream); }
   .seg .cnt { font-size: 12px; opacity: .7; font-variant-numeric: tabular-nums; }
 
@@ -232,7 +243,7 @@
     color: var(--latte);
   }
   .foot .val { font-family: var(--display); font-weight: 700; font-size: 14px; color: var(--cream); }
-  .foot b.t-yes, .foot b.t-no { font-weight: 700; }
+  b.t-yes, b.t-no { font-weight: 700; }
   .delta { font-family: var(--display); font-weight: 700; font-size: 15px; white-space: nowrap; }
   .delta.plus { color: var(--yes); }
   .delta.minus { color: var(--no); }
@@ -263,15 +274,176 @@
     flex-direction: column;
     gap: 12px;
   }
-  .panel .row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 14.5px; color: var(--latte); }
+  .panel .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14.5px; color: var(--latte); }
   .panel .row b { font-family: var(--display); font-weight: 700; font-size: 15px; color: var(--cream); }
   .panel .row b.t-yes { color: var(--yes); }
   .panel .row b.t-no { color: var(--no); }
+  .who-inline { display: inline-flex; align-items: center; gap: 8px; color: var(--cream); font-weight: 600; }
+  .who-inline .ava.sm { border-color: transparent; }
   .history { margin-top: 6px; }
   .hrow { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 0; border-top: 1px solid var(--line); }
   .hrow:first-child { border-top: 0; }
   .hrow .t { font-size: 15px; font-weight: 500; line-height: 1.3; }
   .hrow .s { margin-top: 3px; font-size: 12.5px; color: var(--latte); }
+
+  /* ---------- Создание спора ---------- */
+  .page-h { font-family: var(--display); font-weight: 700; font-size: 26px; line-height: 1.15; }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field-h { font-size: 14px; font-weight: 600; color: var(--cream); }
+  .field textarea,
+  .field input {
+    width: 100%;
+    background: var(--coal);
+    border: 1px solid var(--cocoa);
+    border-radius: 14px;
+    padding: 13px 14px;
+    color: var(--cream);
+    font: inherit;
+    font-size: 16px;
+    outline: none;
+    color-scheme: dark;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color .15s ease;
+  }
+  .field textarea { resize: none; min-height: 78px; line-height: 1.35; }
+  .field input[type="datetime-local"] { min-height: 50px; }
+  .field textarea:focus, .field input:focus { border-color: var(--latte); }
+  .field ::placeholder { color: var(--latte); opacity: .45; }
+  .field.bad textarea, .field.bad input { border-color: var(--no); }
+  .field-f { display: flex; justify-content: space-between; gap: 12px; }
+  .count { font-size: 12px; color: var(--latte); opacity: .6; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .err { font-size: 13px; color: var(--no); }
+  .err:empty { display: none; }
+  .chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .chip {
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid var(--cocoa);
+    background: var(--coal);
+    text-align: center;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--latte);
+    transition: background .2s ease, color .2s ease;
+  }
+  .chip.on { background: var(--cocoa); color: var(--cream); }
+  .chip:disabled { opacity: .3; cursor: default; }
+
+  .pick-h { font-family: var(--display); font-weight: 700; font-size: 17px; margin-bottom: 12px; }
+  .pick-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pick-btn {
+    height: 64px;
+    border-radius: 16px;
+    border: 1.5px solid var(--cocoa);
+    background: var(--coal);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-align: center;
+    transition: background .2s ease, border-color .2s ease, transform .12s ease;
+  }
+  .pick-btn:active { transform: scale(.98); }
+  .pick-btn .big { font-family: var(--display); font-weight: 800; font-size: 18px; }
+  .pick-btn .sub { font-size: 12px; color: var(--latte); }
+  .pick-btn.yes .big { color: var(--yes); }
+  .pick-btn.no .big { color: var(--no); }
+  .pick-btn.yes.on { border-color: var(--yes); background: rgba(143, 199, 154, .10); }
+  .pick-btn.no.on { border-color: var(--no); background: rgba(224, 116, 95, .10); }
+  .pick-btn:disabled { opacity: .3; cursor: default; }
+  .pick-row + .hint { margin-top: 10px; }
+
+  /* ---------- Страница спора ---------- */
+  .eyebrow.invite { color: var(--copper); opacity: 1; }
+  .bet-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: -8px; }
+  .bet-title { font-family: var(--display); font-weight: 700; font-size: 22px; line-height: 1.25; }
+  .facts { display: flex; flex-direction: column; gap: 8px; }
+  .fact { display: flex; align-items: center; gap: 8px; font-size: 14.5px; color: var(--latte); }
+  .fact b { color: var(--cream); font-weight: 600; }
+  .fact.link {
+    align-self: flex-start;
+    color: var(--cream);
+    text-decoration: underline;
+    text-decoration-color: var(--cocoa);
+    text-underline-offset: 3px;
+  }
+  .bankbox {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--coal);
+    border: 1px solid var(--cocoa);
+    border-radius: 18px;
+    padding: 16px;
+  }
+  .bankbox .num { font-size: 34px; margin-top: 8px; }
+  .bank-note { text-align: right; font-size: 13px; color: var(--latte); line-height: 1.45; }
+
+  .teams { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .team { background: var(--coal); border: 1px solid var(--line); border-radius: 16px; padding: 12px; min-width: 0; }
+  .team.dim { opacity: .45; }
+  .team-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .team-h .lbl { font-family: var(--display); font-weight: 800; font-size: 15px; }
+  .team.yes .lbl { color: var(--yes); }
+  .team.no .lbl { color: var(--no); }
+  .team-h .cnt { font-size: 13px; color: var(--latte); }
+  .team ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .team li { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .team .ava.sm { border-color: transparent; }
+  .team .who { min-width: 0; flex: 1; }
+  .team .nm { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .team .tg { font-size: 11.5px; color: var(--latte); opacity: .8; }
+  .ok-mark { color: var(--yes); display: inline-flex; }
+  .wait-mark { color: var(--latte); opacity: .6; font-weight: 700; letter-spacing: 1px; }
+  .ans { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 1px 8px; }
+  .ans.yes { color: var(--yes); background: rgba(143, 199, 154, .12); }
+  .ans.no { color: var(--no); background: rgba(224, 116, 95, .12); }
+  .free-seats {
+    margin-top: -8px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--latte);
+    border: 1px dashed var(--cocoa);
+    border-radius: 12px;
+    padding: 9px;
+  }
+  .note-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--coal);
+    border: 1px solid var(--cocoa);
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-size: 14.5px;
+    color: var(--latte);
+  }
+  .note-box b { color: var(--cream); }
+  .note-box b.t-yes { color: var(--yes); }
+  .note-box b.t-no { color: var(--no); }
+  .note-box .ic { margin-top: 3px; }
+  .note-box.warn { border-color: rgba(224, 135, 74, .5); }
+
+  .result { text-align: center; padding: 22px 16px 18px; border-radius: 22px; border: 1px solid var(--cocoa); background: var(--coal); }
+  .result.win { border-color: rgba(143, 199, 154, .45); background: linear-gradient(180deg, rgba(143, 199, 154, .12), rgba(143, 199, 154, 0) 70%), var(--coal); }
+  .result.lose { border-color: rgba(224, 116, 95, .45); background: linear-gradient(180deg, rgba(224, 116, 95, .12), rgba(224, 116, 95, 0) 70%), var(--coal); }
+  .result-h { font-family: var(--display); font-weight: 800; font-size: 14px; letter-spacing: .16em; text-transform: uppercase; }
+  .result.win .result-h, .result.win .num { color: var(--yes); }
+  .result.lose .result-h, .result.lose .num { color: var(--no); }
+  .result .num { font-size: 52px; margin-top: 12px; }
+  .result .cur { margin-top: 4px; color: var(--latte); }
+  .result p { margin-top: 12px; font-size: 15.5px; }
+  .result-f { margin-top: 6px; font-size: 13px; color: var(--latte); }
+
+  .demo { border: 1px dashed var(--cocoa); border-radius: 16px; padding: 12px 14px; }
+  .demo-h { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--latte); opacity: .8; }
+  .demo p { margin-top: 4px; font-size: 12.5px; color: var(--latte); opacity: .7; }
+  .demo-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .demo-row button { font-size: 13px; font-weight: 600; color: var(--cream); border: 1px solid var(--cocoa); border-radius: 999px; padding: 7px 12px; }
 
   /* ---------- Приветствие ---------- */
   .screen.onb { gap: 28px; padding: calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 28px); }
@@ -324,9 +496,39 @@
   .pill { display: inline-block; padding: 0 10px; border-radius: 999px; font-size: 13px; font-weight: 600; line-height: 22px; vertical-align: 1px; }
   .pill.yes { color: var(--yes); background: rgba(143, 199, 154, .12); border: 1px solid rgba(143, 199, 154, .35); }
   .pill.no { color: var(--no); background: rgba(224, 116, 95, .12); border: 1px solid rgba(224, 116, 95, .35); }
-  .fine { margin-top: 12px; text-align: center; font-size: 13px; color: var(--latte); opacity: .7; }
   .rise { opacity: 0; transform: translateY(12px); animation: rise .6s cubic-bezier(.2, .7, .2, 1) forwards; animation-delay: var(--d, 0s); }
   @keyframes rise { to { opacity: 1; transform: none; } }
+
+  /* ---------- Подтверждение ---------- */
+  .sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 12px calc(var(--safe-bottom) + 12px);
+    background: rgba(0, 0, 0, .55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+  }
+  .sheet.show { opacity: 1; pointer-events: auto; }
+  .sheet-card {
+    width: 100%;
+    max-width: 456px;
+    background: var(--coal);
+    border: 1px solid var(--cocoa);
+    border-radius: 22px;
+    padding: 20px;
+    transform: translateY(24px);
+    transition: transform .25s cubic-bezier(.2, .7, .2, 1);
+  }
+  .sheet.show .sheet-card { transform: none; }
+  .sheet-card h3 { font-family: var(--display); font-weight: 700; font-size: 18px; line-height: 1.3; }
+  .sheet-card p { margin-top: 8px; font-size: 14.5px; color: var(--latte); }
+  .sheet-actions { margin-top: 18px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; }
+  .sheet-actions .btn { height: 50px; font-size: 14px; }
 
   /* ---------- Тост ---------- */
   .toast {
@@ -346,7 +548,7 @@
     color: var(--cream);
     box-shadow: 0 16px 40px -12px rgba(0, 0, 0, .7);
     transition: opacity .25s ease, transform .25s ease;
-    z-index: 10;
+    z-index: 30;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
@@ -357,6 +559,7 @@
 </head>
 <body>
   <div id="app"></div>
+  <div id="sheet" class="sheet"></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -370,6 +573,9 @@
   const inTelegram = !!(tg && tg.initData);
   const atLeast = v => !!(tg && tg.isVersionAtLeast && tg.isVersionAtLeast(v));
   const tgUser = tg && tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
+  const startParam = tg && tg.initDataUnsafe ? tg.initDataUnsafe.start_param : null;
+  const BOT = 'stavnavsebot';
+  const DEMO = true; // тестовый режим: тестовые данные + кнопки, которые изображают других людей
 
   if (tg) {
     tg.ready();
@@ -387,6 +593,9 @@
       else tg.HapticFeedback.impactOccurred(kind || 'light');
     } catch (e) {}
   }
+  function notify(type) {
+    try { if (atLeast('6.1')) tg.HapticFeedback.notificationOccurred(type); } catch (e) {}
+  }
 
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -396,6 +605,7 @@
   /* =====================================================================
      Помощники
      ===================================================================== */
+  const $ = sel => document.querySelector(sel);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -407,24 +617,39 @@
     return many;
   }
   const virts = n => plural(n, 'вирт', 'вирта', 'виртов');
+  const people = n => plural(n, 'человек', 'человека', 'человек');
   const fmt = n => Number(n).toLocaleString('ru-RU');
   const signed = n => (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(Math.abs(n));
 
   const MIN = 60e3, HOUR = 60 * MIN, DAY = 24 * HOUR;
   const MONTHS = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  const z2 = n => String(n).padStart(2, '0');
   const dateShort = ts => { const d = new Date(ts); return d.getDate() + ' ' + MONTHS[d.getMonth()]; };
+  const dateTime = ts => { const d = new Date(ts); return `${d.getDate()} ${MONTHS[d.getMonth()]}, ${z2(d.getHours())}:${z2(d.getMinutes())}`; };
   function mmss(ms) {
     if (ms <= 0) return '00:00';
     const s = Math.floor(ms / 1000);
-    return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+    return z2(Math.floor(s / 60)) + ':' + z2(s % 60);
   }
+  const toLocalInput = ts => {
+    const d = new Date(ts);
+    return `${d.getFullYear()}-${z2(d.getMonth() + 1)}-${z2(d.getDate())}T${z2(d.getHours())}:${z2(d.getMinutes())}`;
+  };
+  const fromLocalInput = s => { const t = new Date(s).getTime(); return isNaN(t) ? null : t; };
+  function isUrl(s) {
+    try {
+      const u = new URL(s);
+      return (u.protocol === 'http:' || u.protocol === 'https:') && u.hostname.indexOf('.') > 0;
+    } catch (e) { return false; }
+  }
+  function hostOf(s) { try { return new URL(s).hostname.replace(/^www\./, ''); } catch (e) { return s; } }
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
   /* =====================================================================
      Тестовые данные. Потом их будет отдавать сервер — экраны не изменятся.
      ===================================================================== */
-  const START_BALANCE = 500;
+  const START_BALANCE = 500, MIN_STAKE = 10, MAX_TITLE = 120;
   const ME = 1;
-  const now = Date.now();
 
   const users = {
     1: { id: 1, name: (tgUser && tgUser.first_name) || 'Гость', username: tgUser && tgUser.username, photo: tgUser && tgUser.photo_url },
@@ -438,60 +663,107 @@
   // участник: кто, на какой стороне, когда вошёл, какой итог отметил
   const p = (user_id, side, joined_at, report) => ({ user_id, side, joined_at, report: report || null });
 
+  // Приглашение от Кати — чтобы проверить вход в чужой спор (ссылка ...?startapp=bet_demo)
+  const onHour = ts => { const d = new Date(ts); d.setMinutes(0, 0, 0); return d.getTime(); };
+  function demoInvite(now) {
+    return { id: 'demo', title: 'В Петербурге на выходных не будет дождя', source: 'https://www.gismeteo.ru/weather-sankt-peterburg-4079/',
+      stake: 50, size: 4, creator: 4, status: 'recruiting', created_at: now - 7 * MIN, result_at: onHour(now + 4 * DAY),
+      participants: [p(4, 'yes', now - 7 * MIN), p(2, 'no', now - 4 * MIN)] };
+  }
+
   // status: recruiting — набор, active — идёт, review — на проверке у арбитра,
   //         resolved — завершён, cancelled — отменён
   // result_at — когда станет известен итог (с этого момента можно отмечать результат)
-  const bets = [
-    { id: 'r1', title: 'В субботу в Москве выпадет снег', stake: 100, size: 4, creator: 1,
-      status: 'recruiting', created_at: now - 18 * MIN, result_at: now + 3 * DAY,
-      participants: [p(1, 'yes', now - 18 * MIN), p(4, 'no', now - 11 * MIN)] },
+  function seed() {
+    const now = Date.now();
+    return [
+      { id: 'r1', title: 'В субботу в Москве выпадет снег', source: 'https://yandex.ru/pogoda/moscow',
+        stake: 100, size: 4, creator: 1, status: 'recruiting', created_at: now - 18 * MIN, result_at: onHour(now + 3 * DAY),
+        participants: [p(1, 'yes', now - 18 * MIN), p(4, 'no', now - 11 * MIN)] },
 
-    { id: 'a1', title: 'Саня пробежит полумарафон быстрее 2 часов', stake: 100, size: 3, creator: 5,
-      status: 'active', created_at: now - 2 * DAY - HOUR, started_at: now - 2 * DAY, result_at: now + 2 * DAY,
-      participants: [p(5, 'no', now - 2 * DAY - HOUR), p(1, 'yes', now - 2 * DAY - 40 * MIN), p(2, 'yes', now - 2 * DAY - 20 * MIN)] },
+      { id: 'a1', title: 'Саня пробежит полумарафон быстрее 2 часов', source: 'https://russiarunning.com',
+        stake: 100, size: 3, creator: 5, status: 'active', created_at: now - 2 * DAY - HOUR, started_at: now - 2 * DAY, result_at: onHour(now + 2 * DAY),
+        participants: [p(5, 'no', now - 2 * DAY - HOUR), p(1, 'yes', now - 2 * DAY - 40 * MIN), p(2, 'yes', now - 2 * DAY - 20 * MIN)] },
 
-    { id: 'a2', title: 'Дима закроет курсач до пятницы', stake: 50, size: 3, creator: 1,
-      status: 'active', created_at: now - 3 * DAY - HOUR, started_at: now - 3 * DAY, result_at: now - 6 * HOUR,
-      participants: [p(1, 'no', now - 3 * DAY - HOUR), p(3, 'yes', now - 3 * DAY - 30 * MIN, 'yes'), p(6, 'yes', now - 3 * DAY - 10 * MIN, 'yes')] },
+      { id: 'a2', title: 'Пробки в Москве в час пик дойдут до 9 баллов', source: 'https://yandex.ru/maps/213/moscow/probki',
+        stake: 50, size: 3, creator: 1, status: 'active', created_at: now - 3 * DAY - HOUR, started_at: now - 3 * DAY, result_at: onHour(now - 6 * HOUR),
+        participants: [p(1, 'no', now - 3 * DAY - HOUR), p(3, 'yes', now - 3 * DAY - 30 * MIN, 'yes'), p(6, 'yes', now - 3 * DAY - 10 * MIN, 'yes')] },
 
-    { id: 'a3', title: 'Препод отменит пару в четверг', stake: 100, size: 2, creator: 5,
-      status: 'review', created_at: now - 4 * DAY - HOUR, started_at: now - 4 * DAY, result_at: now - DAY,
-      participants: [p(5, 'no', now - 4 * DAY - HOUR, 'no'), p(1, 'yes', now - 4 * DAY - 30 * MIN, 'yes')] },
+      { id: 'a3', title: 'Официальный курс доллара превысит 100 ₽', source: 'https://cbr.ru/currency_base/daily/',
+        stake: 100, size: 2, creator: 5, status: 'review', created_at: now - 4 * DAY - HOUR, started_at: now - 4 * DAY, result_at: onHour(now - DAY),
+        participants: [p(5, 'no', now - 4 * DAY - HOUR, 'no'), p(1, 'yes', now - 4 * DAY - 30 * MIN, 'yes')] },
 
-    { id: 'f1', title: 'Пицца приедет быстрее 30 минут', stake: 50, size: 3, creator: 1,
-      status: 'resolved', outcome: 'yes', resolved_at: now - DAY - 3 * HOUR,
-      participants: [p(1, 'yes', now - 2 * DAY), p(2, 'no', now - 2 * DAY + 5 * MIN), p(3, 'no', now - 2 * DAY + 9 * MIN)] },
+      { id: 'f1', title: 'Пицца приедет быстрее 30 минут', source: 'https://eda.yandex.ru',
+        stake: 50, size: 3, creator: 1, status: 'resolved', outcome: 'yes', resolved_by: 'agreement', resolved_at: now - DAY - 3 * HOUR,
+        participants: [p(1, 'yes', now - 2 * DAY, 'yes'), p(2, 'no', now - 2 * DAY + 5 * MIN, 'yes'), p(3, 'no', now - 2 * DAY + 9 * MIN, 'yes')] },
 
-    { id: 'f2', title: 'Наша группа выиграет квиз в пятницу', stake: 100, size: 5, creator: 4,
-      status: 'resolved', outcome: 'yes', resolved_at: now - 3 * DAY - 5 * HOUR,
-      participants: [p(4, 'yes', now - 6 * DAY), p(1, 'yes', now - 6 * DAY + 3 * MIN), p(2, 'yes', now - 6 * DAY + 7 * MIN),
-                     p(3, 'no', now - 6 * DAY + 12 * MIN), p(5, 'no', now - 6 * DAY + 20 * MIN)] },
+      { id: 'f2', title: 'Наша группа выиграет квиз в пятницу', source: 'https://quizplease.ru',
+        stake: 100, size: 5, creator: 4, status: 'resolved', outcome: 'yes', resolved_by: 'agreement', resolved_at: now - 3 * DAY - 5 * HOUR,
+        participants: [p(4, 'yes', now - 6 * DAY, 'yes'), p(1, 'yes', now - 6 * DAY + 3 * MIN, 'yes'), p(2, 'yes', now - 6 * DAY + 7 * MIN, 'yes'),
+                       p(3, 'no', now - 6 * DAY + 12 * MIN, 'yes'), p(5, 'no', now - 6 * DAY + 20 * MIN, 'yes')] },
 
-    { id: 'c1', title: 'Идём в кино в субботу', stake: 100, size: 3, creator: 4,
-      status: 'cancelled', resolved_at: now - 5 * DAY,
-      participants: [p(4, 'yes', now - 5 * DAY - HOUR), p(1, 'yes', now - 5 * DAY - 40 * MIN)] },
+      { id: 'c1', title: 'Идём в кино в субботу', source: 'https://afisha.yandex.ru',
+        stake: 100, size: 3, creator: 4, status: 'cancelled', cancel_reason: 'timeout', created_at: now - 5 * DAY - HOUR, resolved_at: now - 5 * DAY,
+        participants: [p(4, 'yes', now - 5 * DAY - HOUR), p(1, 'yes', now - 5 * DAY - 40 * MIN)] },
 
-    { id: 'f3', title: 'Маша доест острый рамен до конца', stake: 50, size: 4, creator: 1,
-      status: 'resolved', outcome: 'no', resolved_at: now - 6 * DAY - 2 * HOUR,
-      participants: [p(1, 'no', now - 7 * DAY), p(6, 'yes', now - 7 * DAY + 4 * MIN), p(4, 'no', now - 7 * DAY + 6 * MIN), p(3, 'no', now - 7 * DAY + 15 * MIN)] },
+      { id: 'f3', title: 'Маша доест острый рамен до конца', source: 'https://vk.com/video',
+        stake: 50, size: 4, creator: 1, status: 'resolved', outcome: 'no', resolved_by: 'agreement', resolved_at: now - 6 * DAY - 2 * HOUR,
+        participants: [p(1, 'no', now - 7 * DAY, 'no'), p(6, 'yes', now - 7 * DAY + 4 * MIN, 'no'), p(4, 'no', now - 7 * DAY + 6 * MIN, 'no'), p(3, 'no', now - 7 * DAY + 15 * MIN, 'no')] },
 
-    { id: 'f4', title: 'Лёша сдаст на права с первого раза', stake: 100, size: 2, creator: 5,
-      status: 'resolved', outcome: 'yes', resolved_at: now - 9 * DAY,
-      participants: [p(5, 'yes', now - 14 * DAY), p(1, 'no', now - 14 * DAY + 30 * MIN)] },
+      { id: 'f4', title: 'Лёша сдаст на права с первого раза', source: 'https://gosuslugi.ru',
+        stake: 100, size: 2, creator: 5, status: 'resolved', outcome: 'yes', resolved_by: 'arbiter', resolved_at: now - 9 * DAY,
+        participants: [p(5, 'yes', now - 14 * DAY, 'yes'), p(1, 'no', now - 14 * DAY + 30 * MIN, 'no')] },
 
-    { id: 'f5', title: 'Саня встанет к первой паре', stake: 50, size: 2, creator: 1,
-      status: 'resolved', outcome: 'yes', resolved_at: now - 12 * DAY,
-      participants: [p(1, 'no', now - 13 * DAY), p(2, 'yes', now - 13 * DAY + 10 * MIN)] }
-  ];
+      { id: 'f5', title: 'Саня встанет к первой паре', source: 'https://t.me/stavnavsebot',
+        stake: 50, size: 2, creator: 1, status: 'resolved', outcome: 'yes', resolved_by: 'agreement', resolved_at: now - 12 * DAY,
+        participants: [p(1, 'no', now - 13 * DAY, 'yes'), p(2, 'yes', now - 13 * DAY + 10 * MIN, 'yes')] },
+
+      demoInvite(now)
+    ];
+  }
+
+  // В прототипе споры хранятся на этом телефоне. С сервером они будут общими для всех.
+  const KEY = 'snv_proto_v1';
+  function load() {
+    try {
+      const d = JSON.parse(store.get(KEY) || 'null');
+      if (d && Array.isArray(d.bets)) return d.bets;
+    } catch (e) {}
+    return seed();
+  }
+  function save() { store.set(KEY, JSON.stringify({ v: 1, bets })); }
+
+  let bets = load();
+  (function freshInvite() {
+    // приглашение остаётся «свежим», пока ты в него не вошёл
+    const i = bets.findIndex(b => b.id === 'demo');
+    const fresh = demoInvite(Date.now());
+    if (i < 0) bets.push(fresh);
+    else if (!bets[i].participants.some(x => x.user_id === ME)) bets[i] = fresh;
+    save();
+  })();
 
   /* =====================================================================
      Правила (на сервере будут те же самые)
      ===================================================================== */
   const bank = b => b.stake * b.participants.length;
   const mine = b => b.participants.find(x => x.user_id === ME) || null;
+  const isCreator = b => b.creator === ME;
   const isLive = b => b.status === 'recruiting' || b.status === 'active' || b.status === 'review';
+  const sideCount = (b, s) => b.participants.filter(x => x.side === s).length;
+  const seatsLeft = b => b.size - b.participants.length;
+  const deadlineOf = b => b.created_at + HOUR;
   const canReport = b => b.status === 'active' && Date.now() >= b.result_at;
   const needsMe = b => { const m = mine(b); return !!(m && canReport(b) && !m.report); };
+
+  // Последнее место можно занять только так, чтобы в споре были обе стороны
+  function allowedSides(b) {
+    if (seatsLeft(b) === 1) {
+      if (!sideCount(b, 'yes')) return ['yes'];
+      if (!sideCount(b, 'no')) return ['no'];
+    }
+    return ['yes', 'no'];
+  }
 
   // Банк делится поровну между победителями, остаток — тому, кто вошёл раньше
   function payouts(b) {
@@ -520,13 +792,138 @@
     return { available: START_BALANCE + net - frozen, frozen, net, wins, losses, running, total: wins + losses + running };
   }
 
+  function validateNew(f) {
+    const errors = {};
+    const title = String(f.title || '').trim();
+    if (title.length < 5) errors.title = 'Опиши спор хотя бы парой слов';
+    else if (title.length > MAX_TITLE) errors.title = `Не длиннее ${MAX_TITLE} символов`;
+    if (!isUrl(String(f.source || '').trim())) errors.source = 'Нужна ссылка, которая начинается с http:// или https://';
+    if (!f.result_at) errors.result_at = 'Укажи, когда станет известен итог';
+    else if (f.result_at < Date.now() + HOUR) errors.result_at = 'Не раньше чем через час — пока идёт набор, итог не должен быть известен';
+    const avail = summary().available;
+    if (!Number.isInteger(f.stake) || f.stake < MIN_STAKE) errors.stake = `Ставка — целое число, минимум ${MIN_STAKE} виртов`;
+    else if (f.stake > avail) errors.stake = `Не хватает: у тебя ${fmt(avail)} ${virts(avail)}`;
+    if (!(f.size >= 2 && f.size <= 5)) errors.size = 'От 2 до 5 человек';
+    if (f.side !== 'yes' && f.side !== 'no') errors.side = 'Выбери свою сторону';
+    return errors;
+  }
+
+  function startBet(b) { b.status = 'active'; b.started_at = Date.now(); b.size = b.participants.length; }
+
+  function settle(b) {
+    if (b.participants.some(x => !x.report)) return;
+    const first = b.participants[0].report;
+    if (b.participants.every(x => x.report === first)) {
+      b.status = 'resolved'; b.outcome = first; b.resolved_by = 'agreement'; b.resolved_at = Date.now();
+    } else {
+      b.status = 'review'; b.review_at = Date.now();
+    }
+  }
+
+  // Набор не начался за час — спор отменяется сам, ставки возвращаются
+  function sweep() {
+    let changed = false;
+    bets.forEach(b => {
+      if (b.status === 'recruiting' && Date.now() >= deadlineOf(b)) {
+        b.status = 'cancelled'; b.cancel_reason = 'timeout'; b.resolved_at = deadlineOf(b); changed = true;
+      }
+    });
+    if (changed) save();
+    return changed;
+  }
+
+  // Действия. Сейчас меняют тестовые данные, потом станут запросами к серверу.
+  const api = {
+    create(f) {
+      const errors = validateNew(f);
+      if (Object.keys(errors).length) return { errors };
+      const now = Date.now();
+      const b = { id: uid(), title: f.title.trim(), source: f.source.trim(), stake: f.stake, size: f.size, creator: ME,
+        status: 'recruiting', created_at: now, result_at: f.result_at, participants: [p(ME, f.side, now)] };
+      bets.unshift(b);
+      save();
+      return { bet: b };
+    },
+    join(b, side) {
+      if (b.status !== 'recruiting') return 'Набор уже закрыт';
+      if (mine(b)) return 'Ты уже в этом споре';
+      if (seatsLeft(b) < 1) return 'Мест не осталось';
+      if (allowedSides(b).indexOf(side) < 0) return 'Последнее место — только за другую сторону';
+      if (b.stake > summary().available) return 'Не хватает виртов';
+      b.participants.push(p(ME, side, Date.now()));
+      if (seatsLeft(b) === 0) startBet(b);
+      save();
+      return null;
+    },
+    start(b) {
+      if (!isCreator(b) || b.status !== 'recruiting') return 'Начать может только автор, пока идёт набор';
+      if (!sideCount(b, 'yes') || !sideCount(b, 'no')) return 'Нужен хотя бы один человек на каждой стороне';
+      startBet(b);
+      save();
+      return null;
+    },
+    cancel(b) {
+      if (!isCreator(b) || b.status !== 'recruiting') return 'Отменить можно только до старта';
+      b.status = 'cancelled'; b.cancel_reason = 'creator'; b.resolved_at = Date.now();
+      save();
+      return null;
+    },
+    report(b, side) {
+      const m = mine(b);
+      if (!m || !canReport(b)) return 'Сейчас отметить итог нельзя';
+      if (m.report) return 'Ты уже отметил итог';
+      m.report = side;
+      settle(b);
+      save();
+      return null;
+    }
+  };
+
+  // Тестовый режим: изображаем действия других людей
+  const freeFakes = b => Object.values(users).filter(u => u.id !== ME && !b.participants.some(x => x.user_id === u.id));
+  const demo = {
+    addParticipant(b) {
+      const free = freeFakes(b);
+      if (!free.length || seatsLeft(b) < 1 || b.status !== 'recruiting') return;
+      const sides = allowedSides(b);
+      const side = sides.length === 1 ? sides[0] : (sideCount(b, 'yes') <= sideCount(b, 'no') ? 'yes' : 'no');
+      b.participants.push(p(free[0].id, side, Date.now()));
+      if (seatsLeft(b) === 0) startBet(b);
+      save();
+    },
+    fastForward(b) {
+      if (b.status === 'active') { b.result_at = Date.now() - 1000; save(); }
+    },
+    othersReport(b, agree) {
+      const m = mine(b);
+      if (!m || !m.report) return;
+      const flip = m.report === 'yes' ? 'no' : 'yes';
+      b.participants.filter(x => x.user_id !== ME && !x.report)
+        .forEach((x, i) => { x.report = (!agree && i === 0) ? flip : m.report; });
+      settle(b);
+      save();
+    },
+    arbiter(b, outcome) {
+      if (b.status !== 'review') return;
+      b.status = 'resolved'; b.outcome = outcome; b.resolved_by = 'arbiter'; b.resolved_at = Date.now();
+      save();
+    }
+  };
+
   /* =====================================================================
      Кусочки интерфейса
      ===================================================================== */
+  const svg = d => `<svg class="ic" viewBox="0 0 16 16" aria-hidden="true">${d}</svg>`;
   const ICON = {
-    clock: '<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1.5"/></svg>',
-    lock: '<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>',
-    left: '<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>'
+    clock: svg('<circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1.5"/>'),
+    lock: svg('<rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/>'),
+    left: svg('<path d="M10 3 5 8l5 5"/>'),
+    link: svg('<path d="M6.5 9.5l3-3"/><path d="M7.5 4.5l1-1a2.8 2.8 0 0 1 4 4l-1 1"/><path d="M8.5 11.5l-1 1a2.8 2.8 0 0 1-4-4l1-1"/>'),
+    out: svg('<path d="M5 11 11 5"/><path d="M6 5h5v5"/>'),
+    flag: svg('<path d="M4 14V2.5"/><path d="M4 3h7.5L10 5.5 11.5 8H4"/>'),
+    user: svg('<circle cx="8" cy="5.5" r="2.5"/><path d="M3 13.5c.8-2.3 2.7-3.5 5-3.5s4.2 1.2 5 3.5"/>'),
+    check: svg('<path d="M3.5 8.5l3 3 6-7"/>'),
+    scale: svg('<path d="M8 2.5v11"/><path d="M5 13.5h6"/><path d="M3 4.5h10"/><path d="M3 4.5 1.5 8.5h3z"/><path d="M13 4.5l-1.5 4h3z"/>')
   };
 
   const mark = cls => `
@@ -550,32 +947,44 @@
     return '<span class="faces">' + list.map(x => ava(users[x.user_id], 'sm' + (x.user_id === ME ? ' me' : ''))).join('') + '</span>';
   }
   const seg = (k, n, dim) => n ? `<i class="${k}${dim ? ' dim' : ''}" style="flex:${n}"></i>` : '';
-  const sideWord = s => s === 'yes' ? '<b class="t-yes">Да</b>' : '<b class="t-no">Нет</b>';
+  const sideWord = s => s === 'yes' ? '<b class="t-yes">«Да»</b>' : '<b class="t-no">«Нет»</b>';
+  const sideName = s => s === 'yes' ? 'Да' : 'Нет';
   const backLink = () => inTelegram ? '' : `<button class="back" type="button" data-back>${ICON.left}Назад</button>`;
+  const nameOf = id => id === ME ? 'Ты' : users[id].name;
+
+  function statusInfo(b) {
+    if (b.status === 'recruiting') return { text: `Набор · ${b.participants.length} из ${b.size}`, cls: '' };
+    if (b.status === 'active') return { text: 'Идёт', cls: '' };
+    if (b.status === 'review') return { text: 'На проверке', cls: '' };
+    if (b.status === 'resolved') {
+      const m = mine(b);
+      if (!m) return { text: 'Завершён', cls: '' };
+      return m.side === b.outcome ? { text: 'Победа', cls: 't-yes' } : { text: 'Проигрыш', cls: 't-no' };
+    }
+    return { text: 'Отменён', cls: 'muted' };
+  }
 
   function card(b) {
     const yes = b.participants.filter(x => x.side === 'yes');
     const no = b.participants.filter(x => x.side === 'no');
     const m = mine(b);
-    const free = b.status === 'recruiting' ? b.size - b.participants.length : 0;
+    const open = b.status === 'recruiting';
+    const free = open ? seatsLeft(b) : 0;
     const resolved = b.status === 'resolved', cancelled = b.status === 'cancelled';
     const dimYes = (resolved && b.outcome !== 'yes') || cancelled;
     const dimNo = (resolved && b.outcome !== 'no') || cancelled;
+    const st = statusInfo(b);
     const bankLine = `Банк <b class="val">${fmt(bank(b))}</b>`;
-    let left, right, foot;
+    let right, foot;
 
-    if (b.status === 'recruiting') {
-      const deadline = b.created_at + HOUR;
-      left = `<span class="status">Набор · ${b.participants.length} из ${b.size}</span>`;
-      right = `<span class="meta">${ICON.clock}<span data-deadline="${deadline}">${mmss(deadline - Date.now())}</span></span>`;
+    if (open) {
+      right = `<span class="meta">${ICON.clock}<span data-deadline="${deadlineOf(b)}">${mmss(deadlineOf(b) - Date.now())}</span></span>`;
       foot = `<span>${bankLine} · ставка ${fmt(b.stake)}</span><span>ещё ${free} ${plural(free, 'место', 'места', 'мест')}</span>`;
     } else if (b.status === 'review') {
-      left = '<span class="status">На проверке</span>';
       right = '<span class="meta">решает арбитр</span>';
       foot = `<span>${bankLine}</span><span>ты за ${sideWord(m.side)}</span>`;
     } else if (b.status === 'active') {
       const reported = b.participants.filter(x => x.report).length;
-      left = '<span class="status">Идёт</span>';
       right = !canReport(b)
         ? `<span class="meta">${ICON.clock}итог ${dateShort(b.result_at)}</span>`
         : needsMe(b)
@@ -584,26 +993,98 @@
       foot = `<span>${bankLine}</span><span>ты за ${sideWord(m.side)}</span>`;
     } else if (resolved) {
       const won = m.side === b.outcome;
-      left = `<span class="status ${won ? 't-yes' : 't-no'}">${won ? 'Победа' : 'Проигрыш'}</span>`;
       right = `<span class="meta">${dateShort(b.resolved_at)}</span>`;
       foot = `<span>${bankLine} · исход ${sideWord(b.outcome)}</span><span class="delta ${won ? 'plus' : 'minus'}">${signed(myNet(b))}</span>`;
     } else {
-      left = '<span class="status muted">Отменён</span>';
       right = `<span class="meta">${dateShort(b.resolved_at)}</span>`;
       foot = `<span>Ставка ${fmt(b.stake)} вернулась</span><span class="delta zero">0</span>`;
     }
 
     return `
       <article class="card${needsMe(b) ? ' attention' : ''}" data-bet="${esc(b.id)}" role="button" tabindex="0">
-        <div class="top">${left}${right}</div>
+        <div class="top"><span class="status ${st.cls}">${st.text}</span>${right}</div>
         <h3>${esc(b.title)}</h3>
         <div class="sides">
-          <div class="side yes${dimYes ? ' dim' : ''}"><span class="lbl">Да</span>${faces(yes, b.status === 'recruiting')}</div>
-          <div class="side no${dimNo ? ' dim' : ''}">${faces(no, b.status === 'recruiting')}<span class="lbl">Нет</span></div>
+          <div class="side yes${dimYes ? ' dim' : ''}"><span class="lbl">Да</span>${faces(yes, open)}</div>
+          <div class="side no${dimNo ? ' dim' : ''}">${faces(no, open)}<span class="lbl">Нет</span></div>
         </div>
         <div class="split">${seg('y', yes.length, dimYes)}${seg('e', free)}${seg('n', no.length, dimNo)}</div>
         <div class="foot">${foot}</div>
       </article>`;
+  }
+
+  // Две команды: кто за «Да», кто за «Нет».
+  // mode: plain — просто люди; reports — кто уже отметил итог (без ответа); answers — кто что ответил
+  function teams(b, mode) {
+    const col = side => {
+      const list = b.participants.filter(x => x.side === side).sort((x, y) => x.joined_at - y.joined_at);
+      const dim = (b.status === 'resolved' && b.outcome !== side) || b.status === 'cancelled';
+      const rows = list.map(x => {
+        const sub = x.user_id === b.creator ? '<div class="tg">автор</div>' : '';
+        let right = '';
+        if (mode === 'reports') right = x.report ? `<span class="ok-mark" title="отметил итог">${ICON.check}</span>` : '<span class="wait-mark" title="ещё не отметил">···</span>';
+        if (mode === 'answers' && x.report) right = `<span class="ans ${x.report}">${sideName(x.report)}</span>`;
+        return `<li>${ava(users[x.user_id], 'sm')}<div class="who"><div class="nm">${esc(nameOf(x.user_id))}</div>${sub}</div>${right}</li>`;
+      }).join('');
+      return `
+        <div class="team ${side}${dim ? ' dim' : ''}">
+          <div class="team-h"><span class="lbl">${sideName(side)}</span><span class="cnt">${list.length}</span></div>
+          ${list.length ? `<ul>${rows}</ul>` : `<div class="nobody">${b.status === 'recruiting' ? 'пока никого' : 'никого'}</div>`}
+        </div>`;
+    };
+    const free = b.status === 'recruiting' ? seatsLeft(b) : 0;
+    return `<section class="teams">${col('yes')}${col('no')}</section>` +
+      (free ? `<div class="free-seats">Свободно ещё ${free} ${plural(free, 'место', 'места', 'мест')}</div>` : '');
+  }
+
+  function resultBlock(b) {
+    const m = mine(b);
+    const how = b.resolved_by === 'arbiter' ? 'решил арбитр по источнику' : 'все участники согласились';
+    if (!m) return `<div class="note-box">${ICON.flag}<span>Спор завершён: исход ${sideWord(b.outcome)}, ${how}.</span></div>`;
+    const won = m.side === b.outcome, net = myNet(b);
+    const line = won
+      ? (sideCount(b, b.outcome) === 1 ? 'В точку. Весь банк твой.' : 'В точку. Банк делится между победителями.')
+      : 'В этот раз мимо. Бывает.';
+    return `
+      <section class="result ${won ? 'win' : 'lose'}">
+        <div class="result-h">${won ? 'Победа' : 'Проигрыш'}</div>
+        <div class="num">${signed(net)}</div>
+        <div class="cur">${virts(net)}</div>
+        <p>${line}</p>
+        <div class="result-f">Исход ${sideWord(b.outcome)} · ${how}</div>
+      </section>`;
+  }
+
+  function payoutPanel(b) {
+    const pay = payouts(b);
+    const winners = b.participants.filter(x => x.side === b.outcome).sort((x, y) => x.joined_at - y.joined_at);
+    if (!winners.length) return '';
+    const total = bank(b), rest = total - Math.floor(total / winners.length) * winners.length;
+    return `
+      <section class="panel">
+        <div class="eyebrow">Банк ${fmt(total)} — победителям</div>
+        ${winners.map(x => `<div class="row"><span class="who-inline">${ava(users[x.user_id], 'sm')}${esc(nameOf(x.user_id))}</span><b>${fmt(pay[x.user_id])}</b></div>`).join('')}
+        ${rest ? `<p class="hint">Поровну не делится: остаток ${rest} ${virts(rest)} получает тот, кто вошёл в спор первым.</p>` : ''}
+      </section>`;
+  }
+
+  function demoPanel(b) {
+    if (!DEMO) return '';
+    const m = mine(b), btns = [];
+    if (b.status === 'recruiting' && m && seatsLeft(b) > 0 && freeFakes(b).length) btns.push(['add', '+ Тестовый участник']);
+    if (b.status === 'active' && m && !canReport(b)) btns.push(['ff', 'Перемотать к итогу']);
+    if (b.status === 'active' && m && m.report && b.participants.some(x => !x.report)) {
+      btns.push(['agree', 'Остальные согласны']);
+      btns.push(['disagree', 'Кто-то не согласен']);
+    }
+    if (b.status === 'review') { btns.push(['arb-yes', 'Арбитр решил: «Да»']); btns.push(['arb-no', 'Арбитр решил: «Нет»']); }
+    if (!btns.length) return '';
+    return `
+      <section class="demo">
+        <div class="demo-h">Тестовый режим</div>
+        <p>Этих кнопок не будет в настоящем приложении — они изображают других людей.</p>
+        <div class="demo-row">${btns.map(([k, t]) => `<button type="button" data-demo="${k}">${t}</button>`).join('')}</div>
+      </section>`;
   }
 
   /* =====================================================================
@@ -661,12 +1142,12 @@
 
     const hrow = b => {
       if (b.status === 'cancelled') {
-        return `<div class="hrow"><div><div class="t">${esc(b.title)}</div>
+        return `<div class="hrow" data-bet="${esc(b.id)}"><div><div class="t">${esc(b.title)}</div>
           <div class="s">${dateShort(b.resolved_at)} · отменён, ставка вернулась</div></div>
           <span class="delta zero">0</span></div>`;
       }
       const won = mine(b).side === b.outcome;
-      return `<div class="hrow"><div><div class="t">${esc(b.title)}</div>
+      return `<div class="hrow" data-bet="${esc(b.id)}"><div><div class="t">${esc(b.title)}</div>
         <div class="s">${dateShort(b.resolved_at)} · ставка ${fmt(b.stake)} · ${won ? 'победа' : 'проигрыш'}</div></div>
         <span class="delta ${won ? 'plus' : 'minus'}">${signed(myNet(b))}</span></div>`;
     };
@@ -699,6 +1180,7 @@
         </section>
 
         <button class="btn ghost" type="button" data-go="onboarding">Как это работает</button>
+        ${DEMO ? '<button class="link-muted" type="button" data-action="reset">Сбросить тестовые данные</button>' : ''}
       </main>`;
   }
 
@@ -706,7 +1188,7 @@
     const hello = tgUser && tgUser.first_name ? 'Привет, ' + esc(tgUser.first_name) + '!' : 'Привет!';
     return `
       <main class="screen onb">
-        ${!inTelegram && firstRun ? '<a class="open-tg" href="https://t.me/stavnavsebot?startapp">Открыто в браузере. В Telegram: <b>@stavnavsebot</b></a>' : ''}
+        ${!inTelegram && firstRun ? `<a class="open-tg" href="https://t.me/${BOT}?startapp">Открыто в браузере. В Telegram: <b>@${BOT}</b></a>` : ''}
         ${firstRun ? '' : backLink()}
 
         <header class="brand rise">
@@ -742,65 +1224,579 @@
         </section>
 
         <div class="rise" style="--d:.32s">
-          <button class="btn" type="button" data-action="${firstRun ? 'start' : 'back'}">${firstRun ? 'Погнали' : 'Понятно'}</button>
+          <button class="btn" type="button" data-action="${firstRun ? 'welcome-done' : 'back'}">${firstRun ? 'Погнали' : 'Понятно'}</button>
           <p class="fine">Спорь на интерес, а не на нервы.</p>
         </div>
+      </main>`;
+  }
+
+  /* ---------- Создание спора ---------- */
+  const form = {};
+  function defaultResultAt() {
+    const d = new Date(Date.now() + DAY);
+    d.setMinutes(0, 0, 0);
+    d.setHours(d.getHours() + 1);
+    return d.getTime();
+  }
+  function resetForm() {
+    Object.assign(form, { title: '', source: '', result_at: defaultResultAt(), stake: 100, size: 3, side: null, custom: false, submitted: false });
+  }
+  resetForm();
+
+  function renderCreate() {
+    const s = summary();
+    return `
+      <main class="screen create">
+        ${backLink()}
+        <h1 class="page-h">Новый спор</h1>
+
+        <label class="field">
+          <span class="field-h">О чём спорим</span>
+          <textarea id="f-title" rows="2" maxlength="${MAX_TITLE}" placeholder="Например: Саня пробежит полумарафон быстрее 2 часов">${esc(form.title)}</textarea>
+          <span class="field-f"><span class="hint">Сформулируй так, чтобы ответить можно было только «да» или «нет».</span><span class="count" id="f-count">${form.title.length}/${MAX_TITLE}</span></span>
+          <span class="err" data-err="title"></span>
+        </label>
+
+        <label class="field">
+          <span class="field-h">Где проверить итог</span>
+          <input id="f-source" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://" value="${esc(form.source)}">
+          <span class="hint">Сайт с результатами, новость или прогноз. Если мнения разойдутся, арбитр посмотрит сюда.</span>
+          <span class="err" data-err="source"></span>
+        </label>
+
+        <label class="field">
+          <span class="field-h">Когда станет известен итог</span>
+          <input id="f-result" type="datetime-local" value="${toLocalInput(form.result_at || defaultResultAt())}" min="${toLocalInput(Date.now() + HOUR)}">
+          <span class="hint">Не раньше чем через час: пока идёт набор, ответ ещё не должен быть известен. С этого момента участники смогут отметить итог.</span>
+          <span class="err" data-err="result_at"></span>
+        </label>
+
+        <div class="field">
+          <span class="field-h">Ставка с каждого</span>
+          <div class="chips">
+            ${[50, 100, 200].map(v => `<button type="button" class="chip" data-stake="${v}">${v}</button>`).join('')}
+            <button type="button" class="chip" data-stake="custom">Своя</button>
+          </div>
+          <input id="f-stake" type="number" inputmode="numeric" min="${MIN_STAKE}" step="1" placeholder="Сколько виртов" hidden>
+          <span class="hint">У тебя ${fmt(s.available)} ${virts(s.available)}. Все участники ставят одинаково.</span>
+          <span class="err" data-err="stake"></span>
+        </div>
+
+        <div class="field">
+          <span class="field-h">Сколько человек, вместе с тобой</span>
+          <div class="seg seg4">${[2, 3, 4, 5].map(n => `<button type="button" data-size="${n}">${n}</button>`).join('')}</div>
+          <span class="err" data-err="size"></span>
+        </div>
+
+        <div class="field">
+          <span class="field-h">Твоя сторона</span>
+          <div class="pick-row">
+            <button type="button" class="pick-btn yes" data-side="yes"><span class="big">Да</span></button>
+            <button type="button" class="pick-btn no" data-side="no"><span class="big">Нет</span></button>
+          </div>
+          <span class="err" data-err="side"></span>
+        </div>
+
+        <section class="panel" id="f-summary"></section>
+
+        <div>
+          <button class="btn" type="button" id="f-submit" data-action="create-submit">Создать спор</button>
+          <p class="fine">После создания у тебя будет час, чтобы собрать участников.</p>
+        </div>
+      </main>`;
+  }
+
+  function bindCreate() {
+    const t = $('#f-title'), src = $('#f-source'), r = $('#f-result'), st = $('#f-stake');
+    t.addEventListener('keydown', e => { if (e.key === 'Enter') e.preventDefault(); });
+    t.addEventListener('input', () => {
+      if (/\n/.test(t.value)) t.value = t.value.replace(/\n+/g, ' ');
+      form.title = t.value;
+      $('#f-count').textContent = `${t.value.length}/${MAX_TITLE}`;
+      updateCreate();
+    });
+    src.addEventListener('input', () => { form.source = src.value; updateCreate(); });
+    const onDate = () => { form.result_at = r.value ? fromLocalInput(r.value) : null; updateCreate(); };
+    r.addEventListener('input', onDate);
+    r.addEventListener('change', onDate);
+    st.addEventListener('input', () => { const v = st.value.trim(); form.stake = v === '' ? NaN : Number(v); updateCreate(); });
+    if (form.custom && Number.isFinite(form.stake)) st.value = form.stake;
+    updateCreate();
+  }
+
+  function updateCreate() {
+    if (!$('#f-summary')) return;
+    const avail = summary().available;
+    document.querySelectorAll('[data-stake]').forEach(el => {
+      const v = el.dataset.stake;
+      el.classList.toggle('on', form.custom ? v === 'custom' : Number(v) === form.stake);
+      if (v !== 'custom') el.disabled = Number(v) > avail;
+    });
+    $('#f-stake').hidden = !form.custom;
+    document.querySelectorAll('[data-size]').forEach(el => el.classList.toggle('on', Number(el.dataset.size) === form.size));
+    document.querySelectorAll('[data-side]').forEach(el => el.classList.toggle('on', el.dataset.side === form.side));
+
+    const errors = validateNew(form);
+    document.querySelectorAll('[data-err]').forEach(el => {
+      const k = el.dataset.err;
+      const show = form.submitted || (k === 'stake' && Number.isFinite(form.stake));
+      const msg = show ? (errors[k] || '') : '';
+      el.textContent = msg;
+      el.closest('.field').classList.toggle('bad', !!msg);
+    });
+
+    const ok = Number.isInteger(form.stake) && form.stake >= MIN_STAKE;
+    $('#f-summary').innerHTML = ok
+      ? `<div class="row"><span>Ты ставишь</span><b>${fmt(form.stake)} ${virts(form.stake)}</b></div>
+         <div class="row"><span>Банк, если придут все ${form.size}</span><b>${fmt(form.stake * form.size)}</b></div>
+         <div class="row"><span>Если угадаешь только ты</span><b class="t-yes">+${fmt(form.stake * (form.size - 1))}</b></div>`
+      : '<div class="row"><span>Укажи ставку — здесь появится расчёт банка.</span></div>';
+
+    const btn = $('#f-submit');
+    btn.textContent = ok ? `Создать и заморозить ${fmt(form.stake)} ${virts(form.stake)}` : 'Создать спор';
+    btn.classList.toggle('off', Object.keys(errors).length > 0);
+  }
+
+  function pickStake(v) {
+    haptic('select');
+    if (v === 'custom') {
+      form.custom = true;
+      form.stake = NaN;
+      updateCreate();
+      const i = $('#f-stake');
+      i.value = '';
+      i.focus();
+      return;
+    }
+    form.custom = false;
+    form.stake = Number(v);
+    updateCreate();
+  }
+
+  function submitCreate() {
+    form.submitted = true;
+    const res = api.create(form);
+    if (res.errors) {
+      updateCreate();
+      notify('error');
+      const bad = document.querySelector('.field.bad');
+      if (bad) bad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    notify('success');
+    state.tab = 'recruiting';
+    stack[stack.length - 1] = 'bet:' + res.bet.id;   // экран создания заменяем страницей спора
+    render();
+    toast('Спор создан. Зови друзей — на сбор есть час.');
+  }
+
+  /* ---------- Страница спора ---------- */
+  function renderBet(id) {
+    const b = bets.find(x => x.id === id);
+    if (!b) return renderNotFound();
+    const m = mine(b), s = summary(), st = statusInfo(b);
+    const recruiting = b.status === 'recruiting';
+    const invite = recruiting && !m;
+
+    const facts = `
+      <div class="facts">
+        <button type="button" class="fact link" data-open="${esc(b.source)}">${ICON.link}<span>${esc(hostOf(b.source))}</span>${ICON.out}</button>
+        ${isLive(b)
+          ? `<div class="fact">${ICON.flag}<span>Итог: <b>${dateTime(b.result_at)}</b></span></div>`
+          : `<div class="fact">${ICON.flag}<span>${b.status === 'cancelled' ? 'Отменён' : 'Завершён'}: <b>${dateShort(b.resolved_at)}</b></span></div>`}
+        <div class="fact">${ICON.user}<span>Автор: <b>${esc(b.creator === ME ? 'ты' : users[b.creator].name)}</b></span></div>
+      </div>`;
+
+    let bankNote;
+    if (recruiting) bankNote = `ставка ${fmt(b.stake)} с каждого<br>до ${fmt(b.stake * b.size)}, если придут все`;
+    else if (b.status === 'cancelled') bankNote = 'все ставки вернулись';
+    else if (b.status === 'resolved') bankNote = `исход ${sideWord(b.outcome)}`;
+    else bankNote = `ставка ${fmt(b.stake)} с каждого<br>${b.participants.length} ${plural(b.participants.length, 'участник', 'участника', 'участников')}`;
+    const bankBox = `
+      <section class="bankbox">
+        <div><div class="eyebrow">Банк</div><div class="num">${fmt(bank(b))}</div></div>
+        <div class="bank-note">${bankNote}</div>
+      </section>`;
+
+    let block = '', mode = 'plain', actions = '';
+
+    if (invite) {
+      const allowed = allowedSides(b);
+      const pick = state.pick && state.pick.id === b.id && allowed.indexOf(state.pick.side) >= 0 ? state.pick.side : null;
+      const short = s.available < b.stake;
+      block = `
+        <section>
+          <div class="pick-h">На чьей ты стороне?</div>
+          <div class="pick-row">
+            ${['yes', 'no'].map(sd => `
+              <button type="button" class="pick-btn ${sd}${pick === sd ? ' on' : ''}" data-pick="${sd}" ${allowed.indexOf(sd) < 0 ? 'disabled' : ''}>
+                <span class="big">${sideName(sd)}</span><span class="sub">сейчас ${sideCount(b, sd)}</span>
+              </button>`).join('')}
+          </div>
+          ${allowed.length === 1 ? `<p class="hint center">Осталось одно место — только за ${sideWord(allowed[0])}, чтобы в споре были обе стороны.</p>` : ''}
+        </section>`;
+      actions = `
+        <div>
+          <button type="button" class="btn${pick && !short ? '' : ' off'}" data-action="join">
+            ${short ? 'Не хватает виртов' : pick ? `Поставить ${fmt(b.stake)} ${virts(b.stake)} на «${sideName(pick)}»` : 'Выбери сторону'}
+          </button>
+          <p class="fine">У тебя ${fmt(s.available)} ${virts(s.available)}. Ставка заморозится сразу, и выйти из спора будет нельзя: ставки вернутся, только если автор отменит спор до старта.</p>
+        </div>`;
+    } else if (recruiting && isCreator(b)) {
+      const canStart = sideCount(b, 'yes') > 0 && sideCount(b, 'no') > 0;
+      actions = `
+        <div class="stack">
+          <button type="button" class="btn" data-action="share">Позвать друзей</button>
+          <button type="button" class="btn ghost" data-action="copy">Скопировать ссылку</button>
+          <button type="button" class="btn ghost${canStart ? '' : ' off'}" data-action="begin">Начать без остальных</button>
+          ${canStart ? '' : '<p class="hint center">Начать можно, когда на каждой стороне будет хотя бы один человек.</p>'}
+          <button type="button" class="link-danger" data-action="cancel">Отменить спор</button>
+        </div>
+        <p class="fine" style="margin-top:-6px">Если за час спор не начнётся, он отменится сам и все ставки вернутся.</p>`;
+    } else if (recruiting) {
+      block = `<div class="note-box">${ICON.lock}<span>Ты в споре за ${sideWord(m.side)}, ставка заморожена. Спор начнётся, когда наберутся все или автор нажмёт «Начать».</span></div>`;
+      actions = `
+        <div>
+          <button type="button" class="btn ghost" data-action="share">Позвать ещё друзей</button>
+          <p class="fine">Если за час спор не начнётся, он отменится и ставки вернутся.</p>
+        </div>`;
+    } else if (b.status === 'active' && !canReport(b)) {
+      block = `<div class="note-box">${ICON.clock}<span>Итог можно будет отметить <b>${dateTime(b.result_at)}</b>. До этого ставки заморожены.</span></div>`;
+    } else if (b.status === 'active' && m && !m.report) {
+      mode = 'reports';
+      const done = b.participants.filter(x => x.report).length;
+      block = `
+        <section>
+          <div class="pick-h">Чем всё закончилось?</div>
+          <div class="pick-row">
+            <button type="button" class="pick-btn yes" data-report="yes"><span class="big">Да</span></button>
+            <button type="button" class="pick-btn no" data-report="no"><span class="big">Нет</span></button>
+          </div>
+          <p class="hint center">Отметили ${done} из ${b.participants.length}. Сомневаешься — загляни в источник.</p>
+        </section>`;
+      actions = '<p class="fine" style="margin-top:0">Отметить можно один раз. Если все ответят одинаково, банк разделится сразу. Если нет — решит арбитр.</p>';
+    } else if (b.status === 'active') {
+      mode = 'reports';
+      const done = b.participants.filter(x => x.report).length;
+      block = `<div class="note-box">${ICON.check}<span>${m ? `Твой ответ: ${sideWord(m.report)}. ` : ''}Ждём остальных: отметили ${done} из ${b.participants.length}. Ответы откроются, когда отметят все.</span></div>`;
+    } else if (b.status === 'review') {
+      mode = 'answers';
+      block = `<div class="note-box warn">${ICON.scale}<span>Мнения разошлись. Арбитр откроет источник и решит, кто прав. Ставки пока заморожены.</span></div>`;
+    } else if (b.status === 'resolved') {
+      mode = 'answers';
+      block = resultBlock(b);
+      actions = payoutPanel(b);
+    } else {
+      block = `<div class="note-box">${ICON.lock}<span>${b.cancel_reason === 'creator' ? 'Автор отменил спор' : 'Спор не начался за час'} — все ставки вернулись.</span></div>`;
+    }
+
+    return `
+      <main class="screen bet">
+        ${backLink()}
+        ${invite ? `<div class="eyebrow invite">${esc(users[b.creator].name)} зовёт тебя поспорить</div>` : ''}
+        <div class="bet-top">
+          <span class="status ${st.cls}">${st.text}</span>
+          ${recruiting ? `<span class="meta">${ICON.clock}<span data-deadline="${deadlineOf(b)}">${mmss(deadlineOf(b) - Date.now())}</span></span>` : ''}
+        </div>
+        <h1 class="bet-title">${esc(b.title)}</h1>
+        ${facts}
+        ${b.status === 'resolved' ? '' : bankBox}
+        ${block}
+        ${teams(b, mode)}
+        ${actions}
+        ${demoPanel(b)}
+      </main>`;
+  }
+
+  function renderNotFound() {
+    return `
+      <main class="screen">
+        ${backLink()}
+        <div class="empty">Спор не найден. Возможно, ссылка устарела или спор удалили.</div>
+        <button class="btn" type="button" data-action="home">На главную</button>
       </main>`;
   }
 
   /* =====================================================================
      Навигация
      ===================================================================== */
-  const app = document.getElementById('app');
-  const state = { tab: 'active' };
-  let stack = [];
+  const app = $('#app');
+  const state = { tab: 'active', pick: null };
+  let stack = [], lastPhase = '';
+
+  const routeOf = () => stack[stack.length - 1] || 'home';
+  function currentBet() {
+    const r = routeOf();
+    return r.indexOf('bet:') === 0 ? bets.find(x => x.id === r.slice(4)) || null : null;
+  }
+  function phase() {
+    const b = currentBet();
+    return routeOf() + (b ? `|${b.status}|${canReport(b) ? 1 : 0}|${b.participants.length}|${b.participants.filter(x => x.report).length}` : '');
+  }
 
   function render(keepScroll) {
-    const route = stack[stack.length - 1];
-    app.innerHTML = route === 'onboarding' ? renderOnboarding(stack.length === 1)
-                  : route === 'profile' ? renderProfile()
-                  : renderHome();
+    sweep();
+    const r = routeOf(), name = r.split(':')[0];
+    app.innerHTML =
+      name === 'onboarding' ? renderOnboarding(stack.length === 1) :
+      name === 'profile' ? renderProfile() :
+      name === 'create' ? renderCreate() :
+      name === 'bet' ? renderBet(r.slice(4)) :
+      renderHome();
     if (!keepScroll) {
-      if (route !== 'onboarding') app.firstElementChild.classList.add('enter');
+      if (name !== 'onboarding') app.firstElementChild.classList.add('enter');
       window.scrollTo(0, 0);
     }
     if (atLeast('6.1')) { if (stack.length > 1) tg.BackButton.show(); else tg.BackButton.hide(); }
-    if (route === 'onboarding') countUp(document.getElementById('startBalance'), START_BALANCE);
-    tick();
+    if (name === 'onboarding') countUp($('#startBalance'), START_BALANCE);
+    if (name === 'create') bindCreate();
+    lastPhase = phase();
+    updateTimers();
   }
   function go(route) { haptic('light'); stack.push(route); render(); }
-  function back() { if (stack.length > 1) stack.pop(); else stack = ['home']; render(); }
+  function back() {
+    if (sheetDone) return closeSheet(false);
+    if (stack.length > 1) stack.pop(); else stack = ['home'];
+    render();
+  }
   if (atLeast('6.1')) tg.BackButton.onClick(back);
 
-  app.addEventListener('click', e => {
-    const t = e.target.closest('[data-go],[data-tab],[data-action],[data-back],[data-bet]');
-    if (!t) return;
-    if (t.hasAttribute('data-back')) return back();
-    if (t.dataset.go) return go(t.dataset.go);
-    if (t.dataset.tab) {
-      if (state.tab !== t.dataset.tab) { state.tab = t.dataset.tab; haptic('select'); render(true); }
+  /* ---------- Действия на странице спора ---------- */
+  async function doJoin() {
+    const b = currentBet();
+    if (!b) return;
+    const side = state.pick && state.pick.id === b.id ? state.pick.side : null;
+    if (summary().available < b.stake) { notify('error'); return toast('Не хватает виртов для этой ставки.'); }
+    if (!side) { notify('warning'); return toast('Сначала выбери сторону: «Да» или «Нет».'); }
+    const ok = await ask({
+      title: `Ставишь ${fmt(b.stake)} ${virts(b.stake)} на «${sideName(side)}»?`,
+      text: 'Ставка заморозится сразу. Выйти из спора будет нельзя.',
+      ok: 'Поставить'
+    });
+    if (!ok) return;
+    const err = api.join(b, side);
+    if (err) { notify('error'); return toast(err); }
+    notify('success');
+    state.pick = null;
+    state.tab = b.status === 'active' ? 'active' : 'recruiting';
+    render();
+    toast(b.status === 'active' ? 'Все в сборе — спор начался!' : 'Ты в споре. Ставка заморожена.');
+  }
+
+  async function doBegin() {
+    const b = currentBet();
+    if (!b) return;
+    if (!sideCount(b, 'yes') || !sideCount(b, 'no')) { notify('warning'); return toast('Нужен хотя бы один человек на каждой стороне.'); }
+    const n = b.participants.length;
+    const ok = await ask({
+      title: 'Начать без остальных?',
+      text: `Свободные места закроются, спор начнётся с теми, кто уже вошёл: ${n} ${people(n)}.`,
+      ok: 'Начать'
+    });
+    if (!ok) return;
+    const err = api.start(b);
+    if (err) { notify('error'); return toast(err); }
+    notify('success');
+    state.tab = 'active';
+    render();
+    toast('Спор начался. Ставки заморожены до итога.');
+  }
+
+  async function doCancel() {
+    const b = currentBet();
+    if (!b) return;
+    const ok = await ask({
+      title: 'Отменить спор?',
+      text: 'Всем участникам вернутся ставки. Вернуть спор после отмены не получится.',
+      ok: 'Отменить спор',
+      danger: true
+    });
+    if (!ok) return;
+    const err = api.cancel(b);
+    if (err) { notify('error'); return toast(err); }
+    notify('success');
+    render();
+    toast('Спор отменён, ставки вернулись.');
+  }
+
+  async function doReport(side) {
+    const b = currentBet();
+    if (!b) return;
+    const ok = await ask({ title: `Итог — «${sideName(side)}»?`, text: 'Изменить ответ потом не получится.', ok: 'Отметить' });
+    if (!ok) return;
+    const err = api.report(b, side);
+    if (err) { notify('error'); return toast(err); }
+    notify('success');
+    render();
+    if (b.status === 'resolved') toast('Все согласились — банк разделён.');
+    else if (b.status === 'review') toast('Мнения разошлись — спор ушёл арбитру.');
+    else toast('Ответ принят. Ждём остальных.');
+  }
+
+  function doDemo(k) {
+    const b = currentBet();
+    if (!b) return;
+    const before = b.status;
+    if (k === 'add') demo.addParticipant(b);
+    else if (k === 'ff') demo.fastForward(b);
+    else if (k === 'agree') demo.othersReport(b, true);
+    else if (k === 'disagree') demo.othersReport(b, false);
+    else if (k === 'arb-yes') demo.arbiter(b, 'yes');
+    else if (k === 'arb-no') demo.arbiter(b, 'no');
+    haptic('light');
+    render(true);
+    if (before !== b.status) {
+      if (b.status === 'active') toast('Все в сборе — спор начался!');
+      else if (b.status === 'resolved') toast(b.resolved_by === 'arbiter' ? 'Арбитр вынес решение.' : 'Все согласились — банк разделён.');
+      else if (b.status === 'review') toast('Мнения разошлись — спор ушёл арбитру.');
+    }
+  }
+
+  async function doReset() {
+    const ok = await ask({
+      title: 'Сбросить тестовые данные?',
+      text: 'Споры, которые ты создал в прототипе, пропадут, вернутся исходные примеры.',
+      ok: 'Сбросить',
+      danger: true
+    });
+    if (!ok) return;
+    bets = seed();
+    save();
+    state.tab = 'active';
+    stack = ['home'];
+    render();
+    toast('Тестовые данные сброшены.');
+  }
+
+  /* ---------- Ссылки ---------- */
+  const inviteLink = b => `https://t.me/${BOT}?startapp=bet_${b.id}`;
+
+  function share(b) {
+    const link = inviteLink(b);
+    const text = `Спорим? «${b.title}». Ставка ${fmt(b.stake)} ${virts(b.stake)}. Заходи, пока идёт набор:`;
+    haptic('light');
+    if (inTelegram && atLeast('6.1')) {
+      tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
       return;
     }
-    if (t.dataset.bet) { haptic('light'); return toast('Карточку спора соберём следующим шагом.'); }
-    const a = t.dataset.action;
-    if (a === 'create') { haptic('medium'); toast('Экран создания спора — следующий на очереди.'); }
-    else if (a === 'start') { haptic('medium'); store.set('snv_onboarded', '1'); stack = ['home']; render(); }
-    else if (a === 'back') back();
+    if (navigator.share) { navigator.share({ text, url: link }).catch(() => {}); return; }
+    copy(link);
+  }
+
+  function copy(text) {
+    const done = () => { notify('success'); toast('Ссылка скопирована. Отправь её друзьям.'); };
+    const fallback = () => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { toast(text); }
+      ta.remove();
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+    else fallback();
+  }
+
+  function openSource(url) {
+    if (!isUrl(url)) return;
+    haptic('light');
+    try { if (inTelegram && typeof tg.openLink === 'function') { tg.openLink(url); return; } } catch (e) {}
+    window.open(url, '_blank', 'noopener');
+  }
+
+  /* ---------- Клики ---------- */
+  app.addEventListener('click', e => {
+    const t = e.target.closest('[data-go],[data-tab],[data-action],[data-back],[data-bet],[data-stake],[data-size],[data-side],[data-pick],[data-report],[data-open],[data-demo]');
+    if (!t || t.disabled) return;
+    const d = t.dataset;
+    if ('back' in d) return back();
+    if (d.go) return go(d.go);
+    if (d.tab) {
+      if (state.tab !== d.tab) { state.tab = d.tab; haptic('select'); render(true); }
+      return;
+    }
+    if (d.bet) return go('bet:' + d.bet);
+    if (d.stake) return pickStake(d.stake);
+    if (d.size) { form.size = Number(d.size); haptic('select'); return updateCreate(); }
+    if (d.side) { form.side = d.side; haptic('select'); return updateCreate(); }
+    if (d.pick) {
+      const b = currentBet();
+      if (b) { state.pick = { id: b.id, side: d.pick }; haptic('select'); render(true); }
+      return;
+    }
+    if (d.report) return doReport(d.report);
+    if (d.open) return openSource(d.open);
+    if (d.demo) return doDemo(d.demo);
+
+    switch (d.action) {
+      case 'create': resetForm(); return go('create');
+      case 'create-submit': return submitCreate();
+      case 'join': return doJoin();
+      case 'share': { const b = currentBet(); return b && share(b); }
+      case 'copy': { const b = currentBet(); return b && copy(inviteLink(b)); }
+      case 'begin': return doBegin();
+      case 'cancel': return doCancel();
+      case 'welcome-done': haptic('medium'); store.set('snv_onboarded', '1'); stack = ['home']; return render();
+      case 'back': return back();
+      case 'home': stack = ['home']; return render();
+      case 'reset': return doReset();
+    }
   });
   app.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-bet]')) { e.preventDefault(); e.target.click(); }
   });
 
+  /* ---------- Окно подтверждения ---------- */
+  const sheetEl = $('#sheet');
+  let sheetDone = null;
+  function ask({ title, text, ok, danger }) {
+    return new Promise(resolve => {
+      sheetEl.innerHTML = `
+        <div class="sheet-card" role="dialog" aria-modal="true">
+          <h3>${esc(title)}</h3>
+          <p>${esc(text)}</p>
+          <div class="sheet-actions">
+            <button type="button" class="btn ghost" data-sheet="0">Назад</button>
+            <button type="button" class="btn${danger ? ' danger' : ''}" data-sheet="1">${esc(ok)}</button>
+          </div>
+        </div>`;
+      sheetDone = resolve;
+      sheetEl.classList.add('show');
+      if (atLeast('6.1')) tg.BackButton.show();
+      haptic('light');
+    });
+  }
+  function closeSheet(result) {
+    if (!sheetDone) return;
+    const done = sheetDone;
+    sheetDone = null;
+    sheetEl.classList.remove('show');
+    if (atLeast('6.1') && stack.length < 2) tg.BackButton.hide();
+    done(result);
+  }
+  sheetEl.addEventListener('click', e => {
+    const btn = e.target.closest('[data-sheet]');
+    if (btn) closeSheet(btn.dataset.sheet === '1');
+    else if (e.target === sheetEl) closeSheet(false);
+  });
+
   /* =====================================================================
      Мелочи: таймеры, счётчик, тост
      ===================================================================== */
-  function tick() {
+  function updateTimers() {
     document.querySelectorAll('[data-deadline]').forEach(el => {
       const left = Number(el.dataset.deadline) - Date.now();
       el.textContent = left > 0 ? mmss(left) : 'время вышло';
     });
   }
-  setInterval(tick, 1000);
+  setInterval(() => {
+    const changed = sweep();
+    updateTimers();
+    if (sheetDone || routeOf() === 'create') return;
+    if (changed || phase() !== lastPhase) render(true);
+  }, 1000);
 
   function countUp(el, to) {
     if (!el || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
@@ -816,22 +1812,31 @@
     }, 350);
   }
 
-  const toastEl = document.getElementById('toast');
+  const toastEl = $('#toast');
   let toastTimer;
   function toast(text) {
     toastEl.textContent = text;
     toastEl.classList.add('show');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2600);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2800);
   }
 
   /* =====================================================================
-     Старт: первый запуск — приветствие, дальше — сразу главная
+     Старт: ссылка-приглашение → сразу спор; первый запуск → приветствие
      ===================================================================== */
   const hash = location.hash.replace('#', '');
-  if (hash === 'profile' || hash === 'onboarding') stack = ['home', hash];
-  else if (hash === 'home' || store.get('snv_onboarded')) stack = ['home'];
-  else stack = ['onboarding'];
+  if (startParam && /^bet_[A-Za-z0-9_-]+$/.test(startParam)) {
+    store.set('snv_onboarded', '1');
+    stack = ['home', 'bet:' + startParam.slice(4)];
+  } else if (hash.indexOf('bet/') === 0) {
+    stack = ['home', 'bet:' + hash.slice(4)];
+  } else if (hash === 'profile' || hash === 'onboarding' || hash === 'create') {
+    stack = ['home', hash];
+  } else if (hash === 'home' || store.get('snv_onboarded')) {
+    stack = ['home'];
+  } else {
+    stack = ['onboarding'];
+  }
   render();
 })();
 </script>
