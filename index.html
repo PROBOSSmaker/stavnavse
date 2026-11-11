@@ -355,6 +355,20 @@
   .pick-btn.no.on { border-color: var(--no); background: rgba(224, 116, 95, .10); }
   .pick-btn:disabled { opacity: .3; cursor: default; }
   .pick-row + .hint { margin-top: 10px; }
+  .seg.seg2 { grid-template-columns: 1fr 1fr; }
+  .seg.seg2 button { height: 42px; font-size: 14px; }
+  .hint.need, .nobody.need { color: var(--copper); opacity: 1; }
+
+  /* ---------- Доказательства ---------- */
+  .proof-box { background: var(--coal); border: 1px solid rgba(224, 135, 74, .5); border-radius: 18px; padding: 16px; }
+  .proof-box .pick-h { margin-bottom: 6px; }
+  .file-btn { position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; }
+  .file-btn .ic { width: 16px; height: 16px; }
+  .sr-file { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; pointer-events: none; }
+  .proofs { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .proofs li { display: flex; align-items: center; gap: 10px; font-size: 14px; background: var(--graphite); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  .proofs .pn { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .proofs .pt { font-size: 12.5px; color: var(--latte); white-space: nowrap; }
 
   /* ---------- Страница спора ---------- */
   .eyebrow.invite { color: var(--copper); opacity: 1; }
@@ -396,12 +410,27 @@
   .team .ava.sm { border-color: transparent; }
   .team .who { min-width: 0; flex: 1; }
   .team .nm { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .team .tg { font-size: 11.5px; color: var(--latte); opacity: .8; }
+  .team .tg { font-size: 11.5px; color: var(--latte); opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ok-mark { color: var(--yes); display: inline-flex; }
   .wait-mark { color: var(--latte); opacity: .6; font-weight: 700; letter-spacing: 1px; }
   .ans { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 1px 8px; }
   .ans.yes { color: var(--yes); background: rgba(143, 199, 154, .12); }
   .ans.no { color: var(--no); background: rgba(224, 116, 95, .12); }
+  .ans.none { color: var(--latte); background: rgba(199, 178, 153, .10); font-weight: 600; white-space: nowrap; }
+  .rt { display: inline-flex; align-items: center; gap: 3px; font-variant-numeric: tabular-nums; }
+  .rt .ic { width: 11px; height: 11px; }
+  .rt.low { color: var(--no); }
+
+  /* ---------- Рейтинг в профиле ---------- */
+  .meter { height: 8px; border-radius: 4px; background: var(--cocoa); overflow: hidden; }
+  .meter i { display: block; height: 100%; border-radius: 4px; background: var(--latte); }
+  .meter.low i { background: var(--no); }
+  .panel .row.small { font-size: 13.5px; }
+  .panel .row.small b { font-size: 13.5px; }
+  .panel .row > span { display: inline-flex; align-items: center; gap: 7px; }
+  .rhist { display: flex; flex-direction: column; }
+  .rhist .hrow .t { font-size: 14px; }
+  .rhist .delta { font-size: 14px; }
   .free-seats {
     margin-top: -8px;
     text-align: center;
@@ -626,10 +655,17 @@
   const z2 = n => String(n).padStart(2, '0');
   const dateShort = ts => { const d = new Date(ts); return d.getDate() + ' ' + MONTHS[d.getMonth()]; };
   const dateTime = ts => { const d = new Date(ts); return `${d.getDate()} ${MONTHS[d.getMonth()]}, ${z2(d.getHours())}:${z2(d.getMinutes())}`; };
+  const hhmm = ts => { const d = new Date(ts); return z2(d.getHours()) + ':' + z2(d.getMinutes()); };
   function mmss(ms) {
     if (ms <= 0) return '00:00';
     const s = Math.floor(ms / 1000);
     return z2(Math.floor(s / 60)) + ':' + z2(s % 60);
+  }
+  // «11 ч 05 мин», а в последний час — «59:59»
+  function longLeft(ms) {
+    if (ms <= 0) return '00:00';
+    const h = Math.floor(ms / HOUR), m = Math.floor((ms % HOUR) / MIN);
+    return h ? `${h} ч ${z2(m)} мин` : mmss(ms);
   }
   const toLocalInput = ts => {
     const d = new Date(ts);
@@ -649,14 +685,16 @@
      Тестовые данные. Потом их будет отдавать сервер — экраны не изменятся.
      ===================================================================== */
   const START_BALANCE = 500, MIN_STAKE = 10, MAX_TITLE = 120;
+  const VOTE_WINDOW = 12 * HOUR; // сколько времени даём участникам, чтобы отметить итог
+  const voteHoursText = () => { const h = VOTE_WINDOW / HOUR; return h + ' ' + plural(h, 'час', 'часа', 'часов'); };
   const ME = 1;
 
   const users = {
     1: { id: 1, name: (tgUser && tgUser.first_name) || 'Гость', username: tgUser && tgUser.username, photo: tgUser && tgUser.photo_url },
     2: { id: 2, name: 'Саня' },
-    3: { id: 3, name: 'Дима' },
+    3: { id: 3, name: 'Дима', rating_base: 70 },
     4: { id: 4, name: 'Катя' },
-    5: { id: 5, name: 'Лёша' },
+    5: { id: 5, name: 'Лёша', rating_base: 70 },
     6: { id: 6, name: 'Маша' }
   };
 
@@ -689,8 +727,9 @@
         stake: 50, size: 3, creator: 1, status: 'active', created_at: now - 3 * DAY - HOUR, started_at: now - 3 * DAY, result_at: onHour(now - 6 * HOUR),
         participants: [p(1, 'no', now - 3 * DAY - HOUR), p(3, 'yes', now - 3 * DAY - 30 * MIN, 'yes'), p(6, 'yes', now - 3 * DAY - 10 * MIN, 'yes')] },
 
-      { id: 'a3', title: 'Официальный курс доллара превысит 100 ₽', source: 'https://cbr.ru/currency_base/daily/',
+      { id: 'a3', title: 'Лёша сделает 50 отжиманий за раз', verify: 'on_demand', source: null,
         stake: 100, size: 2, creator: 5, status: 'review', created_at: now - 4 * DAY - HOUR, started_at: now - 4 * DAY, result_at: onHour(now - DAY),
+        review_reason: 'disagree', review_at: now - 20 * HOUR, proof_requested_at: now - 3 * HOUR, proofs: [],
         participants: [p(5, 'no', now - 4 * DAY - HOUR, 'no'), p(1, 'yes', now - 4 * DAY - 30 * MIN, 'yes')] },
 
       { id: 'f1', title: 'Пицца приедет быстрее 30 минут', source: 'https://eda.yandex.ru',
@@ -706,7 +745,7 @@
         stake: 100, size: 3, creator: 4, status: 'cancelled', cancel_reason: 'timeout', created_at: now - 5 * DAY - HOUR, resolved_at: now - 5 * DAY,
         participants: [p(4, 'yes', now - 5 * DAY - HOUR), p(1, 'yes', now - 5 * DAY - 40 * MIN)] },
 
-      { id: 'f3', title: 'Маша доест острый рамен до конца', source: 'https://vk.com/video',
+      { id: 'f3', title: 'Маша доест острый рамен до конца', verify: 'on_demand', source: null,
         stake: 50, size: 4, creator: 1, status: 'resolved', outcome: 'no', resolved_by: 'agreement', resolved_at: now - 6 * DAY - 2 * HOUR,
         participants: [p(1, 'no', now - 7 * DAY, 'no'), p(6, 'yes', now - 7 * DAY + 4 * MIN, 'no'), p(4, 'no', now - 7 * DAY + 6 * MIN, 'no'), p(3, 'no', now - 7 * DAY + 15 * MIN, 'no')] },
 
@@ -723,7 +762,7 @@
   }
 
   // В прототипе споры хранятся на этом телефоне. С сервером они будут общими для всех.
-  const KEY = 'snv_proto_v1';
+  const KEY = 'snv_proto_v2';
   function load() {
     try {
       const d = JSON.parse(store.get(KEY) || 'null');
@@ -754,7 +793,10 @@
   const seatsLeft = b => b.size - b.participants.length;
   const deadlineOf = b => b.created_at + HOUR;
   const canReport = b => b.status === 'active' && Date.now() >= b.result_at;
+  const voteDeadline = b => b.result_at + VOTE_WINDOW;
   const needsMe = b => { const m = mine(b); return !!(m && canReport(b) && !m.report); };
+  const onDemand = b => b.verify === 'on_demand' || !b.source;
+  const needsProof = b => !!(b.status === 'review' && b.proof_requested_at && mine(b) && !(b.proofs || []).some(x => x.user_id === ME));
 
   // Последнее место можно занять только так, чтобы в споре были обе стороны
   function allowedSides(b) {
@@ -797,7 +839,7 @@
     const title = String(f.title || '').trim();
     if (title.length < 5) errors.title = 'Опиши спор хотя бы парой слов';
     else if (title.length > MAX_TITLE) errors.title = `Не длиннее ${MAX_TITLE} символов`;
-    if (!isUrl(String(f.source || '').trim())) errors.source = 'Нужна ссылка, которая начинается с http:// или https://';
+    if (f.verify !== 'on_demand' && !isUrl(String(f.source || '').trim())) errors.source = 'Нужна ссылка, которая начинается с http:// или https://';
     if (!f.result_at) errors.result_at = 'Укажи, когда станет известен итог';
     else if (f.result_at < Date.now() + HOUR) errors.result_at = 'Не раньше чем через час — пока идёт набор, итог не должен быть известен';
     const avail = summary().available;
@@ -816,21 +858,65 @@
     if (b.participants.every(x => x.report === first)) {
       b.status = 'resolved'; b.outcome = first; b.resolved_by = 'agreement'; b.resolved_at = Date.now();
     } else {
-      b.status = 'review'; b.review_at = Date.now();
+      b.status = 'review'; b.review_reason = 'disagree'; b.review_at = Date.now();
     }
   }
 
-  // Набор не начался за час — спор отменяется сам, ставки возвращаются
+  // Автоматика по времени:
+  // — набор не начался за час: спор отменяется, ставки возвращаются;
+  // — за 12 часов после даты итога ответили не все: спор уходит арбитру.
   function sweep() {
     let changed = false;
     bets.forEach(b => {
       if (b.status === 'recruiting' && Date.now() >= deadlineOf(b)) {
         b.status = 'cancelled'; b.cancel_reason = 'timeout'; b.resolved_at = deadlineOf(b); changed = true;
+      } else if (b.status === 'active' && Date.now() >= voteDeadline(b)) {
+        b.status = 'review'; b.review_reason = 'timeout'; b.review_at = voteDeadline(b); changed = true;
       }
     });
     if (changed) save();
     return changed;
   }
+
+  /* ---------- Рейтинг ----------
+     Не зависит от того, выиграл человек или проиграл, — только от того,
+     отметил ли он итог за 12 часов и был ли этот итог верным.
+     У всех старт 100, это же максимум.
+     Отметил верный итог вовремя: +5 (не выше 100).
+     Отметил неверный итог (арбитр решил иначе): −20.
+     Не отметил итог за 12 часов: −10. Ниже 0 не опускается. */
+  const RATING = { start: 100, max: 100, honest: 5, mismatch: -20, silent: -10 };
+
+  function rating(uid) {
+    const events = [];
+    bets.forEach(b => {
+      const x = b.participants.find(q => q.user_id === uid);
+      if (!x) return;
+      const timedOut = b.review_reason === 'timeout' && (b.status === 'review' || b.status === 'resolved');
+      if (timedOut && !x.report) events.push({ bet: b, at: b.review_at || voteDeadline(b), delta: RATING.silent, why: 'silent' });
+      if (b.status === 'resolved' && x.report) {
+        const ok = x.report === b.outcome;
+        events.push({ bet: b, at: b.resolved_at, delta: ok ? RATING.honest : RATING.mismatch, why: ok ? 'honest' : 'mismatch' });
+      }
+    });
+    events.sort((a, c) => a.at - c.at);
+    const u = users[uid];
+    let value = u && u.rating_base != null ? u.rating_base : RATING.start;
+    const byBet = {}, history = [];
+    events.forEach(e => {
+      const next = Math.max(0, Math.min(RATING.max, value + e.delta));
+      const applied = next - value;
+      byBet[e.bet.id] = { applied, why: e.why };
+      if (applied) history.push({ bet: e.bet, at: e.at, applied, why: e.why });
+      value = next;
+    });
+    return { value, byBet, history: history.reverse() };
+  }
+  const RATING_WHY = {
+    honest: 'честный ответ вовремя',
+    mismatch: 'неверный ответ, арбитр решил иначе',
+    silent: 'нет ответа за 12 часов'
+  };
 
   // Действия. Сейчас меняют тестовые данные, потом станут запросами к серверу.
   const api = {
@@ -838,7 +924,9 @@
       const errors = validateNew(f);
       if (Object.keys(errors).length) return { errors };
       const now = Date.now();
-      const b = { id: uid(), title: f.title.trim(), source: f.source.trim(), stake: f.stake, size: f.size, creator: ME,
+      const byDemand = f.verify === 'on_demand';
+      const b = { id: uid(), title: f.title.trim(), verify: byDemand ? 'on_demand' : 'link', source: byDemand ? null : f.source.trim(),
+        stake: f.stake, size: f.size, creator: ME,
         status: 'recruiting', created_at: now, result_at: f.result_at, participants: [p(ME, f.side, now)] };
       bets.unshift(b);
       save();
@@ -871,9 +959,24 @@
     report(b, side) {
       const m = mine(b);
       if (!m || !canReport(b)) return 'Сейчас отметить итог нельзя';
+      if (Date.now() >= voteDeadline(b)) return 'Время на ответ вышло — итог решит арбитр';
       if (m.report) return 'Ты уже отметил итог';
       m.report = side;
       settle(b);
+      save();
+      return null;
+    },
+    // Фото или видео для арбитра. В прототипе сохраняем только название файла,
+    // с сервером файл будет уходить арбитру.
+    sendProof(b, file) {
+      if (b.status !== 'review' || !b.proof_requested_at) return 'Сейчас доказательства не нужны';
+      if (!mine(b)) return 'Отправлять могут только участники спора';
+      b.proofs = b.proofs || [];
+      if (b.proofs.filter(x => x.user_id === ME).length >= 5) return 'Хватит пяти файлов';
+      const ext = String(file.name.split('.').pop() || '').toLowerCase();
+      const kind = /^video\//.test(file.type) || /^(mp4|mov|m4v|webm|avi|3gp)$/.test(ext) ? 'video'
+                 : /^image\//.test(file.type) || /^(jpe?g|png|heic|heif|webp|gif)$/.test(ext) ? 'photo' : 'file';
+      b.proofs.push({ user_id: ME, name: file.name, kind, at: Date.now() });
       save();
       return null;
     }
@@ -894,6 +997,9 @@
     fastForward(b) {
       if (b.status === 'active') { b.result_at = Date.now() - 1000; save(); }
     },
+    timeUp(b) {
+      if (b.status === 'active') { b.result_at = Date.now() - VOTE_WINDOW - 1000; save(); }
+    },
     othersReport(b, agree) {
       const m = mine(b);
       if (!m || !m.report) return;
@@ -902,6 +1008,9 @@
         .forEach((x, i) => { x.report = (!agree && i === 0) ? flip : m.report; });
       settle(b);
       save();
+    },
+    requestProof(b) {
+      if (b.status === 'review' && !b.proof_requested_at) { b.proof_requested_at = Date.now(); b.proofs = b.proofs || []; save(); }
     },
     arbiter(b, outcome) {
       if (b.status !== 'review') return;
@@ -923,7 +1032,12 @@
     flag: svg('<path d="M4 14V2.5"/><path d="M4 3h7.5L10 5.5 11.5 8H4"/>'),
     user: svg('<circle cx="8" cy="5.5" r="2.5"/><path d="M3 13.5c.8-2.3 2.7-3.5 5-3.5s4.2 1.2 5 3.5"/>'),
     check: svg('<path d="M3.5 8.5l3 3 6-7"/>'),
-    scale: svg('<path d="M8 2.5v11"/><path d="M5 13.5h6"/><path d="M3 4.5h10"/><path d="M3 4.5 1.5 8.5h3z"/><path d="M13 4.5l-1.5 4h3z"/>')
+    scale: svg('<path d="M8 2.5v11"/><path d="M5 13.5h6"/><path d="M3 4.5h10"/><path d="M3 4.5 1.5 8.5h3z"/><path d="M13 4.5l-1.5 4h3z"/>'),
+    camera: svg('<rect x="1.5" y="4.5" width="13" height="9" rx="2"/><circle cx="8" cy="9" r="2.5"/><path d="M5.5 4.5 6.5 2.5h3l1 2"/>'),
+    video: svg('<rect x="1.5" y="4" width="9" height="8" rx="1.5"/><path d="M10.5 7l4-2v6l-4-2z"/>'),
+    photo: svg('<rect x="1.5" y="2.5" width="13" height="11" rx="2"/><circle cx="5.5" cy="6.5" r="1.3"/><path d="M14.5 11l-4-4-6 6.5"/>'),
+    clip: svg('<path d="M13 7.5 8 12.5a3 3 0 0 1-4.2-4.2l5.3-5.3a2 2 0 0 1 2.8 2.8L6.6 11a1 1 0 0 1-1.4-1.4L10 4.8"/>'),
+    shield: svg('<path d="M8 1.8 13 3.6v4.1c0 3-2.1 5.4-5 6.5-2.9-1.1-5-3.5-5-6.5V3.6z"/>')
   };
 
   const mark = cls => `
@@ -981,7 +1095,7 @@
       right = `<span class="meta">${ICON.clock}<span data-deadline="${deadlineOf(b)}">${mmss(deadlineOf(b) - Date.now())}</span></span>`;
       foot = `<span>${bankLine} · ставка ${fmt(b.stake)}</span><span>ещё ${free} ${plural(free, 'место', 'места', 'мест')}</span>`;
     } else if (b.status === 'review') {
-      right = '<span class="meta">решает арбитр</span>';
+      right = needsProof(b) ? '<span class="chip-action">Нужны доказательства</span>' : '<span class="meta">решает арбитр</span>';
       foot = `<span>${bankLine}</span><span>ты за ${sideWord(m.side)}</span>`;
     } else if (b.status === 'active') {
       const reported = b.participants.filter(x => x.report).length;
@@ -1001,7 +1115,7 @@
     }
 
     return `
-      <article class="card${needsMe(b) ? ' attention' : ''}" data-bet="${esc(b.id)}" role="button" tabindex="0">
+      <article class="card${needsMe(b) || needsProof(b) ? ' attention' : ''}" data-bet="${esc(b.id)}" role="button" tabindex="0">
         <div class="top"><span class="status ${st.cls}">${st.text}</span>${right}</div>
         <h3>${esc(b.title)}</h3>
         <div class="sides">
@@ -1020,16 +1134,17 @@
       const list = b.participants.filter(x => x.side === side).sort((x, y) => x.joined_at - y.joined_at);
       const dim = (b.status === 'resolved' && b.outcome !== side) || b.status === 'cancelled';
       const rows = list.map(x => {
-        const sub = x.user_id === b.creator ? '<div class="tg">автор</div>' : '';
+        const r = rating(x.user_id).value;
+        const sub = `<div class="tg"><span class="rt${r < 70 ? ' low' : ''}" title="рейтинг">${ICON.shield}${r}</span></div>`;
         let right = '';
         if (mode === 'reports') right = x.report ? `<span class="ok-mark" title="отметил итог">${ICON.check}</span>` : '<span class="wait-mark" title="ещё не отметил">···</span>';
-        if (mode === 'answers' && x.report) right = `<span class="ans ${x.report}">${sideName(x.report)}</span>`;
+        if (mode === 'answers') right = x.report ? `<span class="ans ${x.report}">${sideName(x.report)}</span>` : '<span class="ans none" title="не отметил итог">молчит</span>';
         return `<li>${ava(users[x.user_id], 'sm')}<div class="who"><div class="nm">${esc(nameOf(x.user_id))}</div>${sub}</div>${right}</li>`;
       }).join('');
       return `
         <div class="team ${side}${dim ? ' dim' : ''}">
           <div class="team-h"><span class="lbl">${sideName(side)}</span><span class="cnt">${list.length}</span></div>
-          ${list.length ? `<ul>${rows}</ul>` : `<div class="nobody">${b.status === 'recruiting' ? 'пока никого' : 'никого'}</div>`}
+          ${list.length ? `<ul>${rows}</ul>` : b.status === 'recruiting' ? '<div class="nobody need">нужен хотя бы один</div>' : '<div class="nobody">никого</div>'}
         </div>`;
     };
     const free = b.status === 'recruiting' ? seatsLeft(b) : 0;
@@ -1039,12 +1154,17 @@
 
   function resultBlock(b) {
     const m = mine(b);
-    const how = b.resolved_by === 'arbiter' ? 'решил арбитр по источнику' : 'все участники согласились';
+    const how = b.resolved_by !== 'arbiter' ? 'все участники согласились'
+      : b.review_reason === 'timeout' ? 'ответили не все, решил арбитр' : 'решил арбитр';
     if (!m) return `<div class="note-box">${ICON.flag}<span>Спор завершён: исход ${sideWord(b.outcome)}, ${how}.</span></div>`;
     const won = m.side === b.outcome, net = myNet(b);
     const line = won
       ? (sideCount(b, b.outcome) === 1 ? 'В точку. Весь банк твой.' : 'В точку. Банк делится между победителями.')
       : 'В этот раз мимо. Бывает.';
+    const rt = rating(ME).byBet[b.id];
+    const rtText = !rt ? ''
+      : rt.applied ? `<b class="${rt.applied > 0 ? 't-yes' : 't-no'}">${signed(rt.applied)}</b> — ${RATING_WHY[rt.why]}`
+      : rt.why === 'honest' ? `без изменений — у тебя и так максимум ${RATING.max}` : 'без изменений';
     return `
       <section class="result ${won ? 'win' : 'lose'}">
         <div class="result-h">${won ? 'Победа' : 'Проигрыш'}</div>
@@ -1052,7 +1172,36 @@
         <div class="cur">${virts(net)}</div>
         <p>${line}</p>
         <div class="result-f">Исход ${sideWord(b.outcome)} · ${how}</div>
+        ${rtText ? `<div class="result-f">Рейтинг: ${rtText}</div>` : ''}
       </section>`;
+  }
+
+  // Спор на проверке: арбитр смотрит источник или просит доказательства
+  function reviewBlock(b) {
+    const m = mine(b);
+    const penalty = b.review_reason === 'timeout' && m && !m.report
+      ? `<p class="hint center need">−${-RATING.silent} к рейтингу: нет ответа за ${voteHoursText()}.</p>` : '';
+    if (!b.proof_requested_at) {
+      const reason = b.review_reason === 'timeout' ? `Не все отметили итог за ${voteHoursText()}.` : 'Мнения разошлись.';
+      const what = onDemand(b)
+        ? 'Арбитр попросит участников прислать доказательства — фото или видео — и решит, кто прав.'
+        : 'Арбитр откроет источник и решит, кто прав.';
+      return `<div class="note-box warn">${ICON.scale}<span>${reason} ${what} Ставки пока заморожены.</span></div>${penalty}`;
+    }
+    const proofs = b.proofs || [];
+    const sent = new Set(proofs.map(x => x.user_id)).size;
+    const my = proofs.filter(x => x.user_id === ME);
+    const icon = k => k === 'video' ? ICON.video : k === 'photo' ? ICON.photo : ICON.clip;
+    return `
+      <section class="proof-box">
+        <div class="pick-h">Арбитр просит доказательства</div>
+        <p class="hint">Пришли фото, видео или скриншот, которые подтверждают итог. Их увидит только арбитр. Прислали ${sent} из ${b.participants.length}.</p>
+        ${mine(b) ? `
+          <label class="btn ghost file-btn">${ICON.clip}<span>${my.length ? 'Добавить ещё файл' : 'Прикрепить фото или видео'}</span>
+            <input class="sr-file" type="file" accept="image/*,video/*" data-proof>
+          </label>` : ''}
+        ${my.length ? `<ul class="proofs">${my.map(x => `<li>${icon(x.kind)}<span class="pn">${esc(x.name)}</span><span class="pt">отправлено ${hhmm(x.at)}</span></li>`).join('')}</ul>` : ''}
+      </section>${penalty}`;
   }
 
   function payoutPanel(b) {
@@ -1077,6 +1226,8 @@
       btns.push(['agree', 'Остальные согласны']);
       btns.push(['disagree', 'Кто-то не согласен']);
     }
+    if (b.status === 'active' && m && canReport(b) && b.participants.some(x => !x.report)) btns.push(['timeup', `Прошло ${voteHoursText()}`]);
+    if (b.status === 'review' && !b.proof_requested_at) btns.push(['proof', 'Арбитр просит доказательства']);
     if (b.status === 'review') { btns.push(['arb-yes', 'Арбитр решил: «Да»']); btns.push(['arb-no', 'Арбитр решил: «Нет»']); }
     if (!btns.length) return '';
     return `
@@ -1103,7 +1254,7 @@
     const groups = { recruiting: [], active: [], done: [] };
     bets.forEach(b => { if (mine(b)) groups[groupOf(b)].push(b); });
     groups.recruiting.sort((a, b) => a.created_at - b.created_at);
-    const rank = b => needsMe(b) ? 0 : b.status === 'active' ? 1 : 2;
+    const rank = b => needsMe(b) || needsProof(b) ? 0 : b.status === 'active' ? 1 : 2;
     groups.active.sort((a, b) => rank(a) - rank(b) || a.result_at - b.result_at);
     groups.done.sort((a, b) => b.resolved_at - a.resolved_at);
     const list = groups[state.tab];
@@ -1134,7 +1285,7 @@
   }
 
   function renderProfile() {
-    const s = summary(), u = users[ME];
+    const s = summary(), u = users[ME], R = rating(ME);
     const decided = s.wins + s.losses;
     const rate = decided ? Math.round(s.wins * 100 / decided) : 0;
     const history = bets.filter(b => mine(b) && !isLive(b)).sort((a, b) => b.resolved_at - a.resolved_at);
@@ -1160,6 +1311,22 @@
           <h1>${esc(u.name)}</h1>
           ${u.username ? `<div class="handle">@${esc(u.username)}</div>` : ''}
         </header>
+
+        <section class="panel">
+          <div class="row"><span>${ICON.shield} Рейтинг</span><b class="${R.value < 70 ? 't-no' : ''}">${R.value} / ${RATING.max}</b></div>
+          <div class="meter${R.value < 70 ? ' low' : ''}"><i style="width:${Math.round(R.value * 100 / RATING.max)}%"></i></div>
+          <p class="hint">Не зависит от того, выиграл ты или проиграл: важно только, отмечаешь ли ты итог вовремя и честно. Все начинают со ${RATING.max}.</p>
+          <div class="row small"><span>Честный ответ за ${voteHoursText()}</span><b class="t-yes">+${RATING.honest}</b></div>
+          <div class="row small"><span>Неверный ответ (арбитр решил иначе)</span><b class="t-no">${signed(RATING.mismatch)}</b></div>
+          <div class="row small"><span>Нет ответа за ${voteHoursText()}</span><b class="t-no">${signed(RATING.silent)}</b></div>
+          ${R.history.length ? `
+            <div class="eyebrow" style="margin-top:4px">Последние изменения</div>
+            <div class="rhist">${R.history.slice(0, 5).map(e => `
+              <div class="hrow" data-bet="${esc(e.bet.id)}"><div><div class="t">${esc(e.bet.title)}</div>
+                <div class="s">${dateShort(e.at)} · ${RATING_WHY[e.why]}</div></div>
+                <span class="delta ${e.applied > 0 ? 'plus' : 'minus'}">${signed(e.applied)}</span></div>`).join('')}
+            </div>` : ''}
+        </section>
 
         <section class="stats">
           ${stat(s.total, plural(s.total, 'спор', 'спора', 'споров'), '')}
@@ -1217,9 +1384,9 @@
         <section class="how rise" style="--d:.24s">
           <h2 class="eyebrow">Как это работает</h2>
           <ol>
-            <li><span class="n">1</span><div><b>Создай спор</b><p>Условие, ссылка на источник и ставка. Без лишних слов.</p></div></li>
+            <li><span class="n">1</span><div><b>Создай спор</b><p>Условие, ставка и как проверить итог. Без лишних слов.</p></div></li>
             <li><span class="n">2</span><div><b>Позови друзей</b><p>До пяти человек, каждый выбирает сторону: <span class="pill yes">Да</span> или <span class="pill no">Нет</span></p></div></li>
-            <li><span class="n">3</span><div><b>Узнайте, кто прав</b><p>Все согласны с итогом — банк делится сразу. Нет — смотрим источник и решаем.</p></div></li>
+            <li><span class="n">3</span><div><b>Узнайте, кто прав</b><p>Все согласны с итогом — банк делится сразу. Нет — арбитр смотрит источник или просит доказательства.</p></div></li>
           </ol>
         </section>
 
@@ -1239,7 +1406,7 @@
     return d.getTime();
   }
   function resetForm() {
-    Object.assign(form, { title: '', source: '', result_at: defaultResultAt(), stake: 100, size: 3, side: null, custom: false, submitted: false });
+    Object.assign(form, { title: '', verify: 'link', source: '', result_at: defaultResultAt(), stake: 100, size: 3, side: null, custom: false, submitted: false });
   }
   resetForm();
 
@@ -1257,17 +1424,24 @@
           <span class="err" data-err="title"></span>
         </label>
 
-        <label class="field">
-          <span class="field-h">Где проверить итог</span>
-          <input id="f-source" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://" value="${esc(form.source)}">
-          <span class="hint">Сайт с результатами, новость или прогноз. Если мнения разойдутся, арбитр посмотрит сюда.</span>
+        <div class="field">
+          <span class="field-h">Как проверить итог</span>
+          <div class="seg seg2">
+            <button type="button" data-verify="link">По ссылке</button>
+            <button type="button" data-verify="on_demand">При необходимости</button>
+          </div>
+          <div class="field" id="f-link">
+            <input id="f-source" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://" value="${esc(form.source)}" aria-label="Ссылка на источник">
+            <span class="hint">Сайт с результатами, новость или прогноз. Если мнения разойдутся, арбитр посмотрит сюда.</span>
+          </div>
+          <div class="note-box" id="f-demand">${ICON.camera}<span>Ссылки не будет. Если мнения разойдутся, арбитр попросит участников прислать доказательства: фото, видео или скриншот. Участники увидят это до того, как поставят.</span></div>
           <span class="err" data-err="source"></span>
-        </label>
+        </div>
 
         <label class="field">
           <span class="field-h">Когда станет известен итог</span>
           <input id="f-result" type="datetime-local" value="${toLocalInput(form.result_at || defaultResultAt())}" min="${toLocalInput(Date.now() + HOUR)}">
-          <span class="hint">Не раньше чем через час: пока идёт набор, ответ ещё не должен быть известен. С этого момента участники смогут отметить итог.</span>
+          <span class="hint">Не раньше чем через час: пока идёт набор, ответ ещё не должен быть известен. С этого момента у участников будет ${voteHoursText()}, чтобы отметить итог.</span>
           <span class="err" data-err="result_at"></span>
         </label>
 
@@ -1333,6 +1507,9 @@
       if (v !== 'custom') el.disabled = Number(v) > avail;
     });
     $('#f-stake').hidden = !form.custom;
+    document.querySelectorAll('[data-verify]').forEach(el => el.classList.toggle('on', el.dataset.verify === form.verify));
+    $('#f-link').hidden = form.verify === 'on_demand';
+    $('#f-demand').hidden = form.verify !== 'on_demand';
     document.querySelectorAll('[data-size]').forEach(el => el.classList.toggle('on', Number(el.dataset.size) === form.size));
     document.querySelectorAll('[data-side]').forEach(el => el.classList.toggle('on', el.dataset.side === form.side));
 
@@ -1400,11 +1577,13 @@
 
     const facts = `
       <div class="facts">
-        <button type="button" class="fact link" data-open="${esc(b.source)}">${ICON.link}<span>${esc(hostOf(b.source))}</span>${ICON.out}</button>
+        ${onDemand(b)
+          ? `<div class="fact">${ICON.camera}<span>Проверка: <b>при необходимости</b></span></div>`
+          : `<button type="button" class="fact link" data-open="${esc(b.source)}">${ICON.link}<span>${esc(hostOf(b.source))}</span>${ICON.out}</button>`}
         ${isLive(b)
           ? `<div class="fact">${ICON.flag}<span>Итог: <b>${dateTime(b.result_at)}</b></span></div>`
           : `<div class="fact">${ICON.flag}<span>${b.status === 'cancelled' ? 'Отменён' : 'Завершён'}: <b>${dateShort(b.resolved_at)}</b></span></div>`}
-        <div class="fact">${ICON.user}<span>Автор: <b>${esc(b.creator === ME ? 'ты' : users[b.creator].name)}</b></span></div>
+        <div class="fact">${ICON.user}<span>Автор: <b>${esc(b.creator === ME ? 'ты' : users[b.creator].name)}</b>${b.creator === ME ? '' : ` · рейтинг <b>${rating(b.creator).value}</b>`}</span></div>
       </div>`;
 
     let bankNote;
@@ -1424,16 +1603,23 @@
       const allowed = allowedSides(b);
       const pick = state.pick && state.pick.id === b.id && allowed.indexOf(state.pick.side) >= 0 ? state.pick.side : null;
       const short = s.available < b.stake;
+      const emptySide = !sideCount(b, 'yes') ? 'yes' : !sideCount(b, 'no') ? 'no' : null;
+      const sideHint = allowed.length === 1
+        ? `<p class="hint center need">Осталось одно место — только за «${sideName(allowed[0])}», чтобы в споре были обе стороны.</p>`
+        : emptySide
+          ? `<p class="hint center need">Нужен хотя бы один за «${sideName(emptySide)}» — без этого спор не начнётся.</p>`
+          : '';
       block = `
+        ${onDemand(b) ? `<div class="note-box warn">${ICON.camera}<span><b>Проверка при необходимости.</b> Ссылки на источник нет: если мнения разойдутся, арбитр попросит участников прислать фото или видео.</span></div>` : ''}
         <section>
           <div class="pick-h">На чьей ты стороне?</div>
           <div class="pick-row">
             ${['yes', 'no'].map(sd => `
               <button type="button" class="pick-btn ${sd}${pick === sd ? ' on' : ''}" data-pick="${sd}" ${allowed.indexOf(sd) < 0 ? 'disabled' : ''}>
-                <span class="big">${sideName(sd)}</span><span class="sub">сейчас ${sideCount(b, sd)}</span>
+                <span class="big">${sideName(sd)}</span><span class="sub">${sideCount(b, sd) ? 'сейчас ' + sideCount(b, sd) : 'пока никого'}</span>
               </button>`).join('')}
           </div>
-          ${allowed.length === 1 ? `<p class="hint center">Осталось одно место — только за ${sideWord(allowed[0])}, чтобы в споре были обе стороны.</p>` : ''}
+          ${sideHint}
         </section>`;
       actions = `
         <div>
@@ -1461,7 +1647,7 @@
           <p class="fine">Если за час спор не начнётся, он отменится и ставки вернутся.</p>
         </div>`;
     } else if (b.status === 'active' && !canReport(b)) {
-      block = `<div class="note-box">${ICON.clock}<span>Итог можно будет отметить <b>${dateTime(b.result_at)}</b>. До этого ставки заморожены.</span></div>`;
+      block = `<div class="note-box">${ICON.clock}<span>Итог можно будет отметить <b>${dateTime(b.result_at)}</b>, на ответ будет ${voteHoursText()}. До этого ставки заморожены.</span></div>`;
     } else if (b.status === 'active' && m && !m.report) {
       mode = 'reports';
       const done = b.participants.filter(x => x.report).length;
@@ -1472,16 +1658,16 @@
             <button type="button" class="pick-btn yes" data-report="yes"><span class="big">Да</span></button>
             <button type="button" class="pick-btn no" data-report="no"><span class="big">Нет</span></button>
           </div>
-          <p class="hint center">Отметили ${done} из ${b.participants.length}. Сомневаешься — загляни в источник.</p>
+          <p class="hint center">Отметили ${done} из ${b.participants.length}. Ответить нужно до <b>${dateTime(voteDeadline(b))}</b>, иначе рейтинг снизится на ${-RATING.silent}.</p>
         </section>`;
-      actions = '<p class="fine" style="margin-top:0">Отметить можно один раз. Если все ответят одинаково, банк разделится сразу. Если нет — решит арбитр.</p>';
+      actions = `<p class="fine" style="margin-top:0">Отметить можно один раз. ${onDemand(b) ? '' : 'Сомневаешься — загляни в источник. '}Если все ответят одинаково, банк разделится сразу. Если ответы разойдутся или кто-то не ответит за ${voteHoursText()}, решит арбитр.</p>`;
     } else if (b.status === 'active') {
       mode = 'reports';
       const done = b.participants.filter(x => x.report).length;
-      block = `<div class="note-box">${ICON.check}<span>${m ? `Твой ответ: ${sideWord(m.report)}. ` : ''}Ждём остальных: отметили ${done} из ${b.participants.length}. Ответы откроются, когда отметят все.</span></div>`;
+      block = `<div class="note-box">${ICON.check}<span>${m ? `Твой ответ: ${sideWord(m.report)}. ` : ''}Ждём остальных: отметили ${done} из ${b.participants.length}. Ответы откроются, когда отметят все. Если кто-то не ответит до <b>${dateTime(voteDeadline(b))}</b>, итог решит арбитр.</span></div>`;
     } else if (b.status === 'review') {
       mode = 'answers';
-      block = `<div class="note-box warn">${ICON.scale}<span>Мнения разошлись. Арбитр откроет источник и решит, кто прав. Ставки пока заморожены.</span></div>`;
+      block = reviewBlock(b);
     } else if (b.status === 'resolved') {
       mode = 'answers';
       block = resultBlock(b);
@@ -1496,7 +1682,11 @@
         ${invite ? `<div class="eyebrow invite">${esc(users[b.creator].name)} зовёт тебя поспорить</div>` : ''}
         <div class="bet-top">
           <span class="status ${st.cls}">${st.text}</span>
-          ${recruiting ? `<span class="meta">${ICON.clock}<span data-deadline="${deadlineOf(b)}">${mmss(deadlineOf(b) - Date.now())}</span></span>` : ''}
+          ${recruiting
+            ? `<span class="meta">${ICON.clock}<span data-deadline="${deadlineOf(b)}">${mmss(deadlineOf(b) - Date.now())}</span></span>`
+            : canReport(b)
+              ? `<span class="meta">${ICON.clock}<span data-deadline="${voteDeadline(b)}" data-fmt="long">${longLeft(voteDeadline(b) - Date.now())}</span></span>`
+              : ''}
         </div>
         <h1 class="bet-title">${esc(b.title)}</h1>
         ${facts}
@@ -1570,7 +1760,8 @@
     if (!side) { notify('warning'); return toast('Сначала выбери сторону: «Да» или «Нет».'); }
     const ok = await ask({
       title: `Ставишь ${fmt(b.stake)} ${virts(b.stake)} на «${sideName(side)}»?`,
-      text: 'Ставка заморозится сразу. Выйти из спора будет нельзя.',
+      text: 'Ставка заморозится сразу. Выйти из спора будет нельзя.' +
+        (onDemand(b) ? ' Проверка при необходимости: если мнения разойдутся, арбитр может попросить фото или видео.' : ''),
       ok: 'Поставить'
     });
     if (!ok) return;
@@ -1643,12 +1834,15 @@
     else if (k === 'disagree') demo.othersReport(b, false);
     else if (k === 'arb-yes') demo.arbiter(b, 'yes');
     else if (k === 'arb-no') demo.arbiter(b, 'no');
+    else if (k === 'proof') demo.requestProof(b);
+    else if (k === 'timeup') demo.timeUp(b);
     haptic('light');
     render(true);
+    if (k === 'proof') toast('Арбитр просит доказательства. Участникам придёт уведомление.');
     if (before !== b.status) {
       if (b.status === 'active') toast('Все в сборе — спор начался!');
       else if (b.status === 'resolved') toast(b.resolved_by === 'arbiter' ? 'Арбитр вынес решение.' : 'Все согласились — банк разделён.');
-      else if (b.status === 'review') toast('Мнения разошлись — спор ушёл арбитру.');
+      else if (b.status === 'review') toast(b.review_reason === 'timeout' ? `Не все ответили за ${voteHoursText()} — спор ушёл арбитру.` : 'Мнения разошлись — спор ушёл арбитру.');
     }
   }
 
@@ -1708,7 +1902,7 @@
 
   /* ---------- Клики ---------- */
   app.addEventListener('click', e => {
-    const t = e.target.closest('[data-go],[data-tab],[data-action],[data-back],[data-bet],[data-stake],[data-size],[data-side],[data-pick],[data-report],[data-open],[data-demo]');
+    const t = e.target.closest('[data-go],[data-tab],[data-action],[data-back],[data-bet],[data-stake],[data-size],[data-side],[data-verify],[data-pick],[data-report],[data-open],[data-demo]');
     if (!t || t.disabled) return;
     const d = t.dataset;
     if ('back' in d) return back();
@@ -1721,6 +1915,7 @@
     if (d.stake) return pickStake(d.stake);
     if (d.size) { form.size = Number(d.size); haptic('select'); return updateCreate(); }
     if (d.side) { form.side = d.side; haptic('select'); return updateCreate(); }
+    if (d.verify) { form.verify = d.verify; haptic('select'); return updateCreate(); }
     if (d.pick) {
       const b = currentBet();
       if (b) { state.pick = { id: b.id, side: d.pick }; haptic('select'); render(true); }
@@ -1746,6 +1941,19 @@
   });
   app.addEventListener('keydown', e => {
     if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-bet]')) { e.preventDefault(); e.target.click(); }
+  });
+  // Выбрали файл-доказательство
+  app.addEventListener('change', e => {
+    const inp = e.target;
+    if (!inp.matches || !inp.matches('input[data-proof]') || !inp.files || !inp.files.length) return;
+    const b = currentBet();
+    if (!b) return;
+    const file = inp.files[0];
+    const err = api.sendProof(b, { name: file.name, type: file.type, size: file.size });
+    if (err) { notify('error'); return toast(err); }
+    notify('success');
+    render(true);
+    toast('Отправлено арбитру.');
   });
 
   /* ---------- Окно подтверждения ---------- */
@@ -1788,7 +1996,7 @@
   function updateTimers() {
     document.querySelectorAll('[data-deadline]').forEach(el => {
       const left = Number(el.dataset.deadline) - Date.now();
-      el.textContent = left > 0 ? mmss(left) : 'время вышло';
+      el.textContent = left > 0 ? (el.dataset.fmt === 'long' ? longLeft(left) : mmss(left)) : 'время вышло';
     });
   }
   setInterval(() => {
