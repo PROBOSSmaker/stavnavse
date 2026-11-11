@@ -24,6 +24,7 @@
     --yes: #8FC79A;
     --no: #E0745F;
 
+    --line: rgba(74, 59, 49, .65);
     --display: 'Unbounded', system-ui, sans-serif;
     --text: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     --safe-top: calc(var(--tg-safe-area-inset-top, 0px) + var(--tg-content-safe-area-inset-top, 0px));
@@ -42,20 +43,238 @@
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
     background:
-      radial-gradient(120% 55% at 50% -12%, rgba(140, 106, 79, .22), transparent 62%),
+      radial-gradient(120% 100% at 50% -25%, rgba(140, 106, 79, .22), transparent 70%) top center / 100% 560px no-repeat,
       var(--graphite);
   }
 
-  .app {
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: inherit; }
+
+  .screen {
     max-width: 480px;
     margin: 0 auto;
-    padding: calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 28px);
+    padding: calc(var(--safe-top) + 16px) 16px calc(var(--safe-bottom) + 32px);
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 18px;
+  }
+  .screen.enter { animation: enter .35s cubic-bezier(.2, .7, .2, 1) both; }
+  @keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--latte);
+    opacity: .8;
+  }
+  .num { font-family: var(--display); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .ic {
+    width: 14px; height: 14px; flex: none;
+    fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .t-yes { color: var(--yes); }
+  .t-no { color: var(--no); }
+
+  /* ---------- Кнопки ---------- */
+  .btn {
+    display: block;
+    width: 100%;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--copper);
+    color: var(--graphite);
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: .01em;
+    text-align: center;
+    box-shadow: 0 12px 30px -14px rgba(224, 135, 74, .7);
+    transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:active { transform: scale(.98); filter: brightness(.95); }
+  .btn.ghost {
+    height: 50px;
+    background: transparent;
+    border: 1px solid var(--cocoa);
+    color: var(--cream);
+    font-family: var(--text);
+    font-weight: 600;
+    box-shadow: none;
+  }
+  .back {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--latte);
+    padding: 4px 0;
   }
 
-  /* Плашка «открыто в браузере» */
+  /* ---------- Аватарки ---------- */
+  .ava {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: inline-grid;
+    place-items: center;
+    overflow: hidden;
+    flex: none;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .ava.c0 { background: var(--cream); color: var(--graphite); }
+  .ava.c1 { background: var(--latte); color: var(--graphite); }
+  .ava.c2 { background: var(--bronze); color: var(--cream); }
+  .ava.c3 { background: var(--cocoa); color: var(--cream); }
+  .ava.sm { width: 26px; height: 26px; font-size: 11px; border: 2px solid var(--coal); }
+  .ava.sm.me { border-color: var(--cream); }
+  .ava.xl { width: 84px; height: 84px; font-size: 32px; }
+  .faces { display: inline-flex; }
+  .faces .ava + .ava { margin-left: -8px; }
+
+  /* ---------- Главная ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 40px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 14px; letter-spacing: .02em; }
+  .logo em { font-style: normal; color: var(--latte); }
+  .mark-sm { width: 34px; height: auto; }
+  .ava-btn { border-radius: 50%; }
+
+  .wallet { background: var(--coal); border: 1px solid var(--cocoa); border-radius: 22px; padding: 18px; }
+  .amount { margin-top: 8px; display: flex; align-items: baseline; gap: 8px; }
+  .amount .num { font-size: 44px; }
+  .amount .cur { color: var(--latte); }
+  .frozen { margin-top: 10px; display: flex; align-items: center; gap: 7px; font-size: 14px; color: var(--latte); }
+  .wallet .btn { margin-top: 16px; }
+
+  .seg {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px;
+    background: var(--coal);
+    border: 1px solid var(--cocoa);
+    border-radius: 14px;
+  }
+  .seg button {
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--latte);
+    transition: background .2s ease, color .2s ease;
+  }
+  .seg button.on { background: var(--cocoa); color: var(--cream); }
+  .seg .cnt { font-size: 12px; opacity: .7; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Карточка спора в списке ---------- */
+  .list { display: flex; flex-direction: column; gap: 12px; }
+  .card {
+    background: var(--coal);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    cursor: pointer;
+    outline: none;
+    transition: transform .12s ease;
+  }
+  .card:active { transform: scale(.985); }
+  .card:focus-visible { border-color: var(--latte); }
+  .card.attention { border-color: rgba(224, 135, 74, .55); }
+  .card .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 24px; }
+  .status { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--latte); }
+  .status.muted { opacity: .6; }
+  .status.t-yes { color: var(--yes); }
+  .status.t-no { color: var(--no); }
+  .meta { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--latte); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .chip-action {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--copper);
+    border: 1px solid rgba(224, 135, 74, .5);
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .card h3 { font-size: 16.5px; font-weight: 600; line-height: 1.3; }
+  .sides { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .side { display: flex; align-items: center; gap: 8px; }
+  .side.dim { opacity: .38; }
+  .side .lbl { font-size: 13px; font-weight: 700; }
+  .side.yes .lbl { color: var(--yes); }
+  .side.no .lbl { color: var(--no); }
+  .nobody { font-size: 12.5px; color: var(--latte); opacity: .7; }
+  .split { display: flex; gap: 3px; height: 4px; }
+  .split.thick { height: 8px; }
+  .split i { border-radius: 4px; }
+  .split .y { background: var(--yes); }
+  .split .n { background: var(--no); }
+  .split .e { background: var(--cocoa); }
+  .split i.dim { opacity: .3; }
+  .foot {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    font-size: 13.5px;
+    color: var(--latte);
+  }
+  .foot .val { font-family: var(--display); font-weight: 700; font-size: 14px; color: var(--cream); }
+  .foot b.t-yes, .foot b.t-no { font-weight: 700; }
+  .delta { font-family: var(--display); font-weight: 700; font-size: 15px; white-space: nowrap; }
+  .delta.plus { color: var(--yes); }
+  .delta.minus { color: var(--no); }
+  .delta.zero { color: var(--latte); opacity: .7; }
+  .empty {
+    padding: 32px 20px;
+    text-align: center;
+    font-size: 14.5px;
+    color: var(--latte);
+    border: 1px dashed var(--cocoa);
+    border-radius: 18px;
+  }
+
+  /* ---------- Профиль ---------- */
+  .me-head { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; padding: 6px 0 4px; }
+  .me-head h1 { font-family: var(--display); font-weight: 700; font-size: 24px; line-height: 1.2; }
+  .me-head .handle { margin-top: -4px; font-size: 14px; color: var(--latte); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stat { background: var(--coal); border: 1px solid var(--cocoa); border-radius: 16px; padding: 14px 12px 12px; }
+  .stat .num { font-size: 28px; }
+  .stat .k { margin-top: 6px; font-size: 13px; color: var(--latte); }
+  .panel {
+    background: var(--coal);
+    border: 1px solid var(--cocoa);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .panel .row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 14.5px; color: var(--latte); }
+  .panel .row b { font-family: var(--display); font-weight: 700; font-size: 15px; color: var(--cream); }
+  .panel .row b.t-yes { color: var(--yes); }
+  .panel .row b.t-no { color: var(--no); }
+  .history { margin-top: 6px; }
+  .hrow { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .hrow:first-child { border-top: 0; }
+  .hrow .t { font-size: 15px; font-weight: 500; line-height: 1.3; }
+  .hrow .s { margin-top: 3px; font-size: 12.5px; color: var(--latte); }
+
+  /* ---------- Приветствие ---------- */
+  .screen.onb { gap: 28px; padding: calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 28px); }
   .open-tg {
     align-self: flex-start;
     font-size: 12.5px;
@@ -66,37 +285,13 @@
     padding: 6px 12px;
   }
   .open-tg b { color: var(--cream); font-weight: 600; }
-
-  /* Логотип */
   .brand { display: flex; align-items: center; gap: 14px; }
   .mark { width: 62px; height: auto; flex: none; }
-  .wordmark {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 24px;
-    line-height: 1.02;
-    letter-spacing: .01em;
-  }
+  .wordmark { font-family: var(--display); font-weight: 800; font-size: 24px; line-height: 1.02; letter-spacing: .01em; }
   .wordmark span { color: var(--latte); }
-  .tagline {
-    margin-top: 7px;
-    font-size: 10.5px;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    color: var(--latte);
-    opacity: .75;
-  }
-
-  /* Приветствие */
-  .hello h1 {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 28px;
-    line-height: 1.15;
-  }
+  .tagline { margin-top: 7px; font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--latte); opacity: .75; }
+  .hello h1 { font-family: var(--display); font-weight: 700; font-size: 28px; line-height: 1.15; }
   .hello p { margin-top: 10px; color: var(--latte); }
-
-  /* Банк */
   .bank {
     position: relative;
     overflow: hidden;
@@ -105,54 +300,16 @@
     border-radius: 22px;
     padding: 20px;
   }
-  .bank .label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: var(--latte);
-    opacity: .8;
-  }
-  .amount { margin-top: 10px; display: flex; align-items: baseline; gap: 8px; }
-  .amount .num {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 52px;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-  }
-  .amount .cur { color: var(--latte); font-size: 16px; }
+  .bank .amount { margin-top: 10px; }
+  .bank .amount .num { font-size: 52px; }
   .bank .note { margin-top: 14px; font-size: 14px; color: var(--latte); opacity: .85; max-width: 68%; position: relative; }
-  .bank .ghost {
-    position: absolute;
-    right: -34px;
-    bottom: -40px;
-    width: 128px;
-    opacity: .35;
-    pointer-events: none;
-  }
-
-  /* Как это работает */
-  .how h2 {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: var(--latte);
-    opacity: .8;
-    margin-bottom: 4px;
-  }
+  .bank .ghost { position: absolute; right: -34px; bottom: -40px; width: 128px; opacity: .35; pointer-events: none; }
+  .how h2 { margin-bottom: 4px; }
   .how ol { list-style: none; }
-  .how li {
-    display: grid;
-    grid-template-columns: 32px 1fr;
-    gap: 14px;
-    padding: 14px 0;
-  }
-  .how li + li { border-top: 1px solid rgba(74, 59, 49, .65); }
+  .how li { display: grid; grid-template-columns: 32px 1fr; gap: 14px; padding: 14px 0; }
+  .how li + li { border-top: 1px solid var(--line); }
   .how .n {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     border: 1px solid var(--cocoa);
     display: grid;
@@ -164,45 +321,20 @@
   }
   .how b { display: block; font-weight: 600; font-size: 16px; }
   .how p { margin-top: 3px; font-size: 14.5px; color: var(--latte); }
-
-  .pill {
-    display: inline-block;
-    padding: 0 10px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
-    line-height: 22px;
-    vertical-align: 1px;
-  }
+  .pill { display: inline-block; padding: 0 10px; border-radius: 999px; font-size: 13px; font-weight: 600; line-height: 22px; vertical-align: 1px; }
   .pill.yes { color: var(--yes); background: rgba(143, 199, 154, .12); border: 1px solid rgba(143, 199, 154, .35); }
-  .pill.no  { color: var(--no);  background: rgba(224, 116, 95, .12);  border: 1px solid rgba(224, 116, 95, .35); }
-
-  /* Главная кнопка */
-  .btn {
-    width: 100%;
-    height: 56px;
-    border: 0;
-    border-radius: 16px;
-    background: var(--copper);
-    color: var(--graphite);
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: .01em;
-    cursor: pointer;
-    box-shadow: 0 12px 30px -14px rgba(224, 135, 74, .7);
-    transition: transform .12s ease, filter .12s ease;
-  }
-  .btn:active { transform: scale(.98); filter: brightness(.95); }
+  .pill.no { color: var(--no); background: rgba(224, 116, 95, .12); border: 1px solid rgba(224, 116, 95, .35); }
   .fine { margin-top: 12px; text-align: center; font-size: 13px; color: var(--latte); opacity: .7; }
+  .rise { opacity: 0; transform: translateY(12px); animation: rise .6s cubic-bezier(.2, .7, .2, 1) forwards; animation-delay: var(--d, 0s); }
+  @keyframes rise { to { opacity: 1; transform: none; } }
 
-  /* Тост */
+  /* ---------- Тост ---------- */
   .toast {
     position: fixed;
     left: 50%;
     bottom: calc(var(--safe-bottom) + 24px);
-    width: calc(100% - 40px);
-    max-width: 440px;
+    width: calc(100% - 32px);
+    max-width: 448px;
     transform: translate(-50%, 16px);
     opacity: 0;
     pointer-events: none;
@@ -212,150 +344,496 @@
     padding: 13px 16px;
     font-size: 14.5px;
     color: var(--cream);
+    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, .7);
     transition: opacity .25s ease, transform .25s ease;
+    z-index: 10;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-  /* Появление */
-  .rise {
-    opacity: 0;
-    transform: translateY(12px);
-    animation: rise .6s cubic-bezier(.2, .7, .2, 1) forwards;
-    animation-delay: var(--d, 0s);
-  }
-  @keyframes rise { to { opacity: 1; transform: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .rise { animation: none; opacity: 1; transform: none; }
+    .rise, .screen.enter { animation: none; opacity: 1; transform: none; }
   }
 </style>
 </head>
 <body>
-  <main class="app">
-    <a id="openTg" class="open-tg" href="https://t.me/stavnavsebot?startapp" hidden>
-      Открыто в браузере. В Telegram: <b>@stavnavsebot</b>
-    </a>
-
-    <header class="brand rise">
-      <svg class="mark" viewBox="0 0 96 84" aria-hidden="true">
-        <defs>
-          <clipPath id="front"><rect x="34" y="28" width="58" height="42" rx="13"/></clipPath>
-        </defs>
-        <!-- первая сторона спора -->
-        <rect x="4" y="4" width="58" height="42" rx="13" fill="#C7B299"/>
-        <path d="M14 40 L10 58 L30 44 Z" fill="#C7B299"/>
-        <!-- вторая сторона спора -->
-        <rect x="34" y="28" width="58" height="42" rx="13" fill="#8C6A4F"/>
-        <path d="M82 64 L88 82 L66 68 Z" fill="#8C6A4F"/>
-        <!-- перекрытие: общий банк -->
-        <rect x="4" y="4" width="58" height="42" rx="13" fill="#4A3B31" clip-path="url(#front)"/>
-        <!-- галочка-пруф -->
-        <path d="M38.5 37 L46 44.5 L59.5 31" fill="none" stroke="#E0874A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <div>
-        <div class="wordmark">СТАВЬ<br>НА <span>ВСЁ</span></div>
-        <div class="tagline">Докажи, что ты прав</div>
-      </div>
-    </header>
-
-    <section class="hello rise" style="--d:.08s">
-      <h1 id="hello">Привет!</h1>
-      <p>Здесь спорят по-честному: ставки замораживаются, пока не станет ясно, кто прав.</p>
-    </section>
-
-    <section class="bank rise" style="--d:.16s">
-      <div class="label">Стартовый банк</div>
-      <div class="amount"><span class="num" id="balance">500</span><span class="cur">виртов</span></div>
-      <p class="note">Игровая валюта: её нельзя купить или вывести. Спорим на интерес.</p>
-      <svg class="ghost" viewBox="0 0 96 84" aria-hidden="true" fill="none" stroke="#8C6A4F" stroke-width="2" stroke-linejoin="round">
-        <path d="M17 4 H49 A13 13 0 0 1 62 17 V33 A13 13 0 0 1 49 46 H28 L10 58 L14 44.5 A13 13 0 0 1 4 33 V17 A13 13 0 0 1 17 4 Z"/>
-        <path d="M47 28 H79 A13 13 0 0 1 92 41 V57 A13 13 0 0 1 82 69.5 L88 82 L68 70 H47 A13 13 0 0 1 34 57 V41 A13 13 0 0 1 47 28 Z"/>
-      </svg>
-    </section>
-
-    <section class="how rise" style="--d:.24s">
-      <h2>Как это работает</h2>
-      <ol>
-        <li>
-          <span class="n">1</span>
-          <div><b>Создай спор</b><p>Условие, ссылка на источник и ставка. Без лишних слов.</p></div>
-        </li>
-        <li>
-          <span class="n">2</span>
-          <div><b>Позови друзей</b><p>До пяти человек, каждый выбирает сторону: <span class="pill yes">Да</span> или <span class="pill no">Нет</span></p></div>
-        </li>
-        <li>
-          <span class="n">3</span>
-          <div><b>Узнайте, кто прав</b><p>Все согласны с итогом — банк делится сразу. Нет — смотрим источник и решаем.</p></div>
-        </li>
-      </ol>
-    </section>
-
-    <div class="rise" style="--d:.32s">
-      <button id="start" class="btn" type="button">Создать первый спор</button>
-      <p class="fine">Спорь на интерес, а не на нервы.</p>
-    </div>
-  </main>
-
+  <div id="app"></div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
-  (function () {
-    var tg = window.Telegram && window.Telegram.WebApp;
-    var inTelegram = !!(tg && tg.initData);
+(function () {
+  'use strict';
 
-    function atLeast(v) {
-      return !!(tg && tg.isVersionAtLeast && tg.isVersionAtLeast(v));
-    }
+  /* =====================================================================
+     Telegram
+     ===================================================================== */
+  const tg = window.Telegram && window.Telegram.WebApp;
+  const inTelegram = !!(tg && tg.initData);
+  const atLeast = v => !!(tg && tg.isVersionAtLeast && tg.isVersionAtLeast(v));
+  const tgUser = tg && tg.initDataUnsafe ? tg.initDataUnsafe.user : null;
 
-    if (tg) {
-      tg.ready();
-      tg.expand();
-      try { if (atLeast('6.1')) tg.setBackgroundColor('#0F0F0F'); } catch (e) {}
-      try { if (atLeast('6.9')) tg.setHeaderColor('#0F0F0F'); } catch (e) {}
-      try { if (atLeast('7.10')) tg.setBottomBarColor('#0F0F0F'); } catch (e) {}
-    }
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    try { if (atLeast('6.1')) tg.setBackgroundColor('#0F0F0F'); } catch (e) {}
+    try { if (atLeast('6.9')) tg.setHeaderColor('#0F0F0F'); } catch (e) {}
+    try { if (atLeast('7.10')) tg.setBottomBarColor('#0F0F0F'); } catch (e) {}
+    try { if (atLeast('7.7')) tg.disableVerticalSwipes(); } catch (e) {}
+  }
 
-    // Имя из Telegram
-    var user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
-    if (user && user.first_name) {
-      document.getElementById('hello').textContent = 'Привет, ' + user.first_name + '!';
-    }
+  function haptic(kind) {
+    try {
+      if (!atLeast('6.1')) return;
+      if (kind === 'select') tg.HapticFeedback.selectionChanged();
+      else tg.HapticFeedback.impactOccurred(kind || 'light');
+    } catch (e) {}
+  }
 
-    // Подсказка, если страницу открыли не в Telegram
-    if (!inTelegram) document.getElementById('openTg').hidden = false;
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
 
-    // Счётчик баланса
-    var balance = document.getElementById('balance');
-    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!reduce) {
-      balance.textContent = '0';
-      setTimeout(function () {
-        var t0 = performance.now(), dur = 900;
-        (function step(now) {
-          var p = Math.min(1, (now - t0) / dur);
-          balance.textContent = Math.round(500 * (1 - Math.pow(1 - p, 3)));
-          if (p < 1) requestAnimationFrame(step);
-        })(t0);
-      }, 350);
-    }
+  /* =====================================================================
+     Помощники
+     ===================================================================== */
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-    function haptic(style) {
-      try { if (atLeast('6.1')) tg.HapticFeedback.impactOccurred(style); } catch (e) {}
-    }
+  function plural(n, one, few, many) {
+    const a = Math.abs(n) % 100, b = a % 10;
+    if (a > 10 && a < 20) return many;
+    if (b > 1 && b < 5) return few;
+    if (b === 1) return one;
+    return many;
+  }
+  const virts = n => plural(n, 'вирт', 'вирта', 'виртов');
+  const fmt = n => Number(n).toLocaleString('ru-RU');
+  const signed = n => (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(Math.abs(n));
 
-    var toastEl = document.getElementById('toast'), toastTimer;
-    function toast(text) {
-      toastEl.textContent = text;
-      toastEl.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 2600);
-    }
+  const MIN = 60e3, HOUR = 60 * MIN, DAY = 24 * HOUR;
+  const MONTHS = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+  const dateShort = ts => { const d = new Date(ts); return d.getDate() + ' ' + MONTHS[d.getMonth()]; };
+  function mmss(ms) {
+    if (ms <= 0) return '00:00';
+    const s = Math.floor(ms / 1000);
+    return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }
 
-    document.getElementById('start').addEventListener('click', function () {
-      haptic('medium');
-      toast('Почти готово: создание споров подъедет в следующей версии.');
+  /* =====================================================================
+     Тестовые данные. Потом их будет отдавать сервер — экраны не изменятся.
+     ===================================================================== */
+  const START_BALANCE = 500;
+  const ME = 1;
+  const now = Date.now();
+
+  const users = {
+    1: { id: 1, name: (tgUser && tgUser.first_name) || 'Гость', username: tgUser && tgUser.username, photo: tgUser && tgUser.photo_url },
+    2: { id: 2, name: 'Саня' },
+    3: { id: 3, name: 'Дима' },
+    4: { id: 4, name: 'Катя' },
+    5: { id: 5, name: 'Лёша' },
+    6: { id: 6, name: 'Маша' }
+  };
+
+  // участник: кто, на какой стороне, когда вошёл, какой итог отметил
+  const p = (user_id, side, joined_at, report) => ({ user_id, side, joined_at, report: report || null });
+
+  // status: recruiting — набор, active — идёт, review — на проверке у арбитра,
+  //         resolved — завершён, cancelled — отменён
+  // result_at — когда станет известен итог (с этого момента можно отмечать результат)
+  const bets = [
+    { id: 'r1', title: 'В субботу в Москве выпадет снег', stake: 100, size: 4, creator: 1,
+      status: 'recruiting', created_at: now - 18 * MIN, result_at: now + 3 * DAY,
+      participants: [p(1, 'yes', now - 18 * MIN), p(4, 'no', now - 11 * MIN)] },
+
+    { id: 'a1', title: 'Саня пробежит полумарафон быстрее 2 часов', stake: 100, size: 3, creator: 5,
+      status: 'active', created_at: now - 2 * DAY - HOUR, started_at: now - 2 * DAY, result_at: now + 2 * DAY,
+      participants: [p(5, 'no', now - 2 * DAY - HOUR), p(1, 'yes', now - 2 * DAY - 40 * MIN), p(2, 'yes', now - 2 * DAY - 20 * MIN)] },
+
+    { id: 'a2', title: 'Дима закроет курсач до пятницы', stake: 50, size: 3, creator: 1,
+      status: 'active', created_at: now - 3 * DAY - HOUR, started_at: now - 3 * DAY, result_at: now - 6 * HOUR,
+      participants: [p(1, 'no', now - 3 * DAY - HOUR), p(3, 'yes', now - 3 * DAY - 30 * MIN, 'yes'), p(6, 'yes', now - 3 * DAY - 10 * MIN, 'yes')] },
+
+    { id: 'a3', title: 'Препод отменит пару в четверг', stake: 100, size: 2, creator: 5,
+      status: 'review', created_at: now - 4 * DAY - HOUR, started_at: now - 4 * DAY, result_at: now - DAY,
+      participants: [p(5, 'no', now - 4 * DAY - HOUR, 'no'), p(1, 'yes', now - 4 * DAY - 30 * MIN, 'yes')] },
+
+    { id: 'f1', title: 'Пицца приедет быстрее 30 минут', stake: 50, size: 3, creator: 1,
+      status: 'resolved', outcome: 'yes', resolved_at: now - DAY - 3 * HOUR,
+      participants: [p(1, 'yes', now - 2 * DAY), p(2, 'no', now - 2 * DAY + 5 * MIN), p(3, 'no', now - 2 * DAY + 9 * MIN)] },
+
+    { id: 'f2', title: 'Наша группа выиграет квиз в пятницу', stake: 100, size: 5, creator: 4,
+      status: 'resolved', outcome: 'yes', resolved_at: now - 3 * DAY - 5 * HOUR,
+      participants: [p(4, 'yes', now - 6 * DAY), p(1, 'yes', now - 6 * DAY + 3 * MIN), p(2, 'yes', now - 6 * DAY + 7 * MIN),
+                     p(3, 'no', now - 6 * DAY + 12 * MIN), p(5, 'no', now - 6 * DAY + 20 * MIN)] },
+
+    { id: 'c1', title: 'Идём в кино в субботу', stake: 100, size: 3, creator: 4,
+      status: 'cancelled', resolved_at: now - 5 * DAY,
+      participants: [p(4, 'yes', now - 5 * DAY - HOUR), p(1, 'yes', now - 5 * DAY - 40 * MIN)] },
+
+    { id: 'f3', title: 'Маша доест острый рамен до конца', stake: 50, size: 4, creator: 1,
+      status: 'resolved', outcome: 'no', resolved_at: now - 6 * DAY - 2 * HOUR,
+      participants: [p(1, 'no', now - 7 * DAY), p(6, 'yes', now - 7 * DAY + 4 * MIN), p(4, 'no', now - 7 * DAY + 6 * MIN), p(3, 'no', now - 7 * DAY + 15 * MIN)] },
+
+    { id: 'f4', title: 'Лёша сдаст на права с первого раза', stake: 100, size: 2, creator: 5,
+      status: 'resolved', outcome: 'yes', resolved_at: now - 9 * DAY,
+      participants: [p(5, 'yes', now - 14 * DAY), p(1, 'no', now - 14 * DAY + 30 * MIN)] },
+
+    { id: 'f5', title: 'Саня встанет к первой паре', stake: 50, size: 2, creator: 1,
+      status: 'resolved', outcome: 'yes', resolved_at: now - 12 * DAY,
+      participants: [p(1, 'no', now - 13 * DAY), p(2, 'yes', now - 13 * DAY + 10 * MIN)] }
+  ];
+
+  /* =====================================================================
+     Правила (на сервере будут те же самые)
+     ===================================================================== */
+  const bank = b => b.stake * b.participants.length;
+  const mine = b => b.participants.find(x => x.user_id === ME) || null;
+  const isLive = b => b.status === 'recruiting' || b.status === 'active' || b.status === 'review';
+  const canReport = b => b.status === 'active' && Date.now() >= b.result_at;
+  const needsMe = b => { const m = mine(b); return !!(m && canReport(b) && !m.report); };
+
+  // Банк делится поровну между победителями, остаток — тому, кто вошёл раньше
+  function payouts(b) {
+    const res = {};
+    if (b.status !== 'resolved') return res;
+    const winners = b.participants.filter(x => x.side === b.outcome).sort((x, y) => x.joined_at - y.joined_at);
+    if (!winners.length) return res;
+    const total = bank(b), share = Math.floor(total / winners.length), rest = total - share * winners.length;
+    winners.forEach((w, i) => { res[w.user_id] = share + (i === 0 ? rest : 0); });
+    return res;
+  }
+  const myNet = b => b.status === 'resolved' ? (payouts(b)[ME] || 0) - b.stake : 0;
+
+  function summary() {
+    let frozen = 0, net = 0, wins = 0, losses = 0, running = 0;
+    bets.forEach(b => {
+      const m = mine(b);
+      if (!m) return;
+      if (isLive(b)) frozen += b.stake;
+      if (b.status === 'active' || b.status === 'review') running++;
+      if (b.status === 'resolved') {
+        net += myNet(b);
+        if (m.side === b.outcome) wins++; else losses++;
+      }
     });
-  })();
+    return { available: START_BALANCE + net - frozen, frozen, net, wins, losses, running, total: wins + losses + running };
+  }
+
+  /* =====================================================================
+     Кусочки интерфейса
+     ===================================================================== */
+  const ICON = {
+    clock: '<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 1.5"/></svg>',
+    lock: '<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="2"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>',
+    left: '<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>'
+  };
+
+  const mark = cls => `
+    <svg class="${cls}" viewBox="0 0 96 84" aria-hidden="true">
+      <defs><clipPath id="clip-${cls}"><rect x="34" y="28" width="58" height="42" rx="13"/></clipPath></defs>
+      <rect x="4" y="4" width="58" height="42" rx="13" fill="#C7B299"/>
+      <path d="M14 40 L10 58 L30 44 Z" fill="#C7B299"/>
+      <rect x="34" y="28" width="58" height="42" rx="13" fill="#8C6A4F"/>
+      <path d="M82 64 L88 82 L66 68 Z" fill="#8C6A4F"/>
+      <rect x="4" y="4" width="58" height="42" rx="13" fill="#4A3B31" clip-path="url(#clip-${cls})"/>
+      <path d="M38.5 37 L46 44.5 L59.5 31" fill="none" stroke="#E0874A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+
+  const initial = name => String(name || '?').trim().charAt(0).toUpperCase();
+  function ava(u, cls) {
+    const inner = u.photo ? `<img src="${esc(u.photo)}" alt="">` : esc(initial(u.name));
+    return `<span class="ava c${u.id % 4} ${cls || ''}" title="${esc(u.name)}">${inner}</span>`;
+  }
+  function faces(list, open) {
+    if (!list.length) return `<span class="nobody">${open ? 'пока никого' : 'никого'}</span>`;
+    return '<span class="faces">' + list.map(x => ava(users[x.user_id], 'sm' + (x.user_id === ME ? ' me' : ''))).join('') + '</span>';
+  }
+  const seg = (k, n, dim) => n ? `<i class="${k}${dim ? ' dim' : ''}" style="flex:${n}"></i>` : '';
+  const sideWord = s => s === 'yes' ? '<b class="t-yes">Да</b>' : '<b class="t-no">Нет</b>';
+  const backLink = () => inTelegram ? '' : `<button class="back" type="button" data-back>${ICON.left}Назад</button>`;
+
+  function card(b) {
+    const yes = b.participants.filter(x => x.side === 'yes');
+    const no = b.participants.filter(x => x.side === 'no');
+    const m = mine(b);
+    const free = b.status === 'recruiting' ? b.size - b.participants.length : 0;
+    const resolved = b.status === 'resolved', cancelled = b.status === 'cancelled';
+    const dimYes = (resolved && b.outcome !== 'yes') || cancelled;
+    const dimNo = (resolved && b.outcome !== 'no') || cancelled;
+    const bankLine = `Банк <b class="val">${fmt(bank(b))}</b>`;
+    let left, right, foot;
+
+    if (b.status === 'recruiting') {
+      const deadline = b.created_at + HOUR;
+      left = `<span class="status">Набор · ${b.participants.length} из ${b.size}</span>`;
+      right = `<span class="meta">${ICON.clock}<span data-deadline="${deadline}">${mmss(deadline - Date.now())}</span></span>`;
+      foot = `<span>${bankLine} · ставка ${fmt(b.stake)}</span><span>ещё ${free} ${plural(free, 'место', 'места', 'мест')}</span>`;
+    } else if (b.status === 'review') {
+      left = '<span class="status">На проверке</span>';
+      right = '<span class="meta">решает арбитр</span>';
+      foot = `<span>${bankLine}</span><span>ты за ${sideWord(m.side)}</span>`;
+    } else if (b.status === 'active') {
+      const reported = b.participants.filter(x => x.report).length;
+      left = '<span class="status">Идёт</span>';
+      right = !canReport(b)
+        ? `<span class="meta">${ICON.clock}итог ${dateShort(b.result_at)}</span>`
+        : needsMe(b)
+          ? '<span class="chip-action">Отметь итог</span>'
+          : `<span class="meta">итог отметили ${reported} из ${b.participants.length}</span>`;
+      foot = `<span>${bankLine}</span><span>ты за ${sideWord(m.side)}</span>`;
+    } else if (resolved) {
+      const won = m.side === b.outcome;
+      left = `<span class="status ${won ? 't-yes' : 't-no'}">${won ? 'Победа' : 'Проигрыш'}</span>`;
+      right = `<span class="meta">${dateShort(b.resolved_at)}</span>`;
+      foot = `<span>${bankLine} · исход ${sideWord(b.outcome)}</span><span class="delta ${won ? 'plus' : 'minus'}">${signed(myNet(b))}</span>`;
+    } else {
+      left = '<span class="status muted">Отменён</span>';
+      right = `<span class="meta">${dateShort(b.resolved_at)}</span>`;
+      foot = `<span>Ставка ${fmt(b.stake)} вернулась</span><span class="delta zero">0</span>`;
+    }
+
+    return `
+      <article class="card${needsMe(b) ? ' attention' : ''}" data-bet="${esc(b.id)}" role="button" tabindex="0">
+        <div class="top">${left}${right}</div>
+        <h3>${esc(b.title)}</h3>
+        <div class="sides">
+          <div class="side yes${dimYes ? ' dim' : ''}"><span class="lbl">Да</span>${faces(yes, b.status === 'recruiting')}</div>
+          <div class="side no${dimNo ? ' dim' : ''}">${faces(no, b.status === 'recruiting')}<span class="lbl">Нет</span></div>
+        </div>
+        <div class="split">${seg('y', yes.length, dimYes)}${seg('e', free)}${seg('n', no.length, dimNo)}</div>
+        <div class="foot">${foot}</div>
+      </article>`;
+  }
+
+  /* =====================================================================
+     Экраны
+     ===================================================================== */
+  const TABS = [['recruiting', 'Набор'], ['active', 'Идут'], ['done', 'Завершены']];
+  const EMPTY = {
+    recruiting: 'Сейчас ничего не собирается. Создай спор и кинь ссылку друзьям.',
+    active: 'Активных споров нет. Самое время с кем-нибудь поспорить.',
+    done: 'Здесь появятся споры, которые уже закончились.'
+  };
+  const groupOf = b => b.status === 'recruiting' ? 'recruiting' : isLive(b) ? 'active' : 'done';
+
+  function renderHome() {
+    const s = summary();
+    const groups = { recruiting: [], active: [], done: [] };
+    bets.forEach(b => { if (mine(b)) groups[groupOf(b)].push(b); });
+    groups.recruiting.sort((a, b) => a.created_at - b.created_at);
+    const rank = b => needsMe(b) ? 0 : b.status === 'active' ? 1 : 2;
+    groups.active.sort((a, b) => rank(a) - rank(b) || a.result_at - b.result_at);
+    groups.done.sort((a, b) => b.resolved_at - a.resolved_at);
+    const list = groups[state.tab];
+
+    return `
+      <main class="screen home">
+        <header class="topbar">
+          <div class="logo">${mark('mark-sm')}<span>СТАВЬ НА <em>ВСЁ</em></span></div>
+          <button class="ava-btn" type="button" data-go="profile" aria-label="Профиль">${ava(users[ME], 'md')}</button>
+        </header>
+
+        <section class="wallet">
+          <div class="eyebrow">Баланс</div>
+          <div class="amount"><span class="num">${fmt(s.available)}</span><span class="cur">${virts(s.available)}</span></div>
+          <div class="frozen">${ICON.lock}ещё ${fmt(s.frozen)} ${virts(s.frozen)} заморожено в спорах</div>
+          <button class="btn" type="button" data-action="create">Создать спор</button>
+        </section>
+
+        <nav class="seg" role="tablist">
+          ${TABS.map(([k, label]) => `
+            <button type="button" role="tab" data-tab="${k}" class="${state.tab === k ? 'on' : ''}" aria-selected="${state.tab === k}">
+              ${label}<span class="cnt">${groups[k].length}</span>
+            </button>`).join('')}
+        </nav>
+
+        <div class="list">${list.length ? list.map(card).join('') : `<div class="empty">${EMPTY[state.tab]}</div>`}</div>
+      </main>`;
+  }
+
+  function renderProfile() {
+    const s = summary(), u = users[ME];
+    const decided = s.wins + s.losses;
+    const rate = decided ? Math.round(s.wins * 100 / decided) : 0;
+    const history = bets.filter(b => mine(b) && !isLive(b)).sort((a, b) => b.resolved_at - a.resolved_at);
+    const stat = (v, k, cls) => `<div class="stat"><div class="num ${cls}">${fmt(v)}</div><div class="k">${k}</div></div>`;
+
+    const hrow = b => {
+      if (b.status === 'cancelled') {
+        return `<div class="hrow"><div><div class="t">${esc(b.title)}</div>
+          <div class="s">${dateShort(b.resolved_at)} · отменён, ставка вернулась</div></div>
+          <span class="delta zero">0</span></div>`;
+      }
+      const won = mine(b).side === b.outcome;
+      return `<div class="hrow"><div><div class="t">${esc(b.title)}</div>
+        <div class="s">${dateShort(b.resolved_at)} · ставка ${fmt(b.stake)} · ${won ? 'победа' : 'проигрыш'}</div></div>
+        <span class="delta ${won ? 'plus' : 'minus'}">${signed(myNet(b))}</span></div>`;
+    };
+
+    return `
+      <main class="screen profile">
+        ${backLink()}
+        <header class="me-head">
+          ${ava(u, 'xl')}
+          <h1>${esc(u.name)}</h1>
+          ${u.username ? `<div class="handle">@${esc(u.username)}</div>` : ''}
+        </header>
+
+        <section class="stats">
+          ${stat(s.total, plural(s.total, 'спор', 'спора', 'споров'), '')}
+          ${stat(s.wins, plural(s.wins, 'победа', 'победы', 'побед'), 't-yes')}
+          ${stat(s.losses, plural(s.losses, 'поражение', 'поражения', 'поражений'), 't-no')}
+        </section>
+
+        <section class="panel">
+          <div class="row"><span>Процент побед</span><b>${rate}%</b></div>
+          <div class="split thick">${seg('y', s.wins)}${seg('n', s.losses)}${decided ? '' : seg('e', 1)}</div>
+          <div class="row"><span>Итог за всё время</span><b class="${s.net > 0 ? 't-yes' : s.net < 0 ? 't-no' : ''}">${signed(s.net)} ${virts(s.net)}</b></div>
+          <div class="row"><span>Идут сейчас</span><b>${s.running}</b></div>
+        </section>
+
+        <section>
+          <div class="eyebrow">История</div>
+          <div class="history">${history.length ? history.map(hrow).join('') : '<div class="empty">Пока пусто. Первый спор — самый волнительный.</div>'}</div>
+        </section>
+
+        <button class="btn ghost" type="button" data-go="onboarding">Как это работает</button>
+      </main>`;
+  }
+
+  function renderOnboarding(firstRun) {
+    const hello = tgUser && tgUser.first_name ? 'Привет, ' + esc(tgUser.first_name) + '!' : 'Привет!';
+    return `
+      <main class="screen onb">
+        ${!inTelegram && firstRun ? '<a class="open-tg" href="https://t.me/stavnavsebot?startapp">Открыто в браузере. В Telegram: <b>@stavnavsebot</b></a>' : ''}
+        ${firstRun ? '' : backLink()}
+
+        <header class="brand rise">
+          ${mark('mark')}
+          <div>
+            <div class="wordmark">СТАВЬ<br>НА <span>ВСЁ</span></div>
+            <div class="tagline">Докажи, что ты прав</div>
+          </div>
+        </header>
+
+        <section class="hello rise" style="--d:.08s">
+          <h1>${hello}</h1>
+          <p>Здесь спорят по-честному: ставки замораживаются, пока не станет ясно, кто прав.</p>
+        </section>
+
+        <section class="bank rise" style="--d:.16s">
+          <div class="eyebrow">Стартовый банк</div>
+          <div class="amount"><span class="num" id="startBalance">500</span><span class="cur">виртов</span></div>
+          <p class="note">Игровая валюта: её нельзя купить или вывести. Спорим на интерес.</p>
+          <svg class="ghost" viewBox="0 0 96 84" aria-hidden="true" fill="none" stroke="#8C6A4F" stroke-width="2" stroke-linejoin="round">
+            <path d="M17 4 H49 A13 13 0 0 1 62 17 V33 A13 13 0 0 1 49 46 H28 L10 58 L14 44.5 A13 13 0 0 1 4 33 V17 A13 13 0 0 1 17 4 Z"/>
+            <path d="M47 28 H79 A13 13 0 0 1 92 41 V57 A13 13 0 0 1 82 69.5 L88 82 L68 70 H47 A13 13 0 0 1 34 57 V41 A13 13 0 0 1 47 28 Z"/>
+          </svg>
+        </section>
+
+        <section class="how rise" style="--d:.24s">
+          <h2 class="eyebrow">Как это работает</h2>
+          <ol>
+            <li><span class="n">1</span><div><b>Создай спор</b><p>Условие, ссылка на источник и ставка. Без лишних слов.</p></div></li>
+            <li><span class="n">2</span><div><b>Позови друзей</b><p>До пяти человек, каждый выбирает сторону: <span class="pill yes">Да</span> или <span class="pill no">Нет</span></p></div></li>
+            <li><span class="n">3</span><div><b>Узнайте, кто прав</b><p>Все согласны с итогом — банк делится сразу. Нет — смотрим источник и решаем.</p></div></li>
+          </ol>
+        </section>
+
+        <div class="rise" style="--d:.32s">
+          <button class="btn" type="button" data-action="${firstRun ? 'start' : 'back'}">${firstRun ? 'Погнали' : 'Понятно'}</button>
+          <p class="fine">Спорь на интерес, а не на нервы.</p>
+        </div>
+      </main>`;
+  }
+
+  /* =====================================================================
+     Навигация
+     ===================================================================== */
+  const app = document.getElementById('app');
+  const state = { tab: 'active' };
+  let stack = [];
+
+  function render(keepScroll) {
+    const route = stack[stack.length - 1];
+    app.innerHTML = route === 'onboarding' ? renderOnboarding(stack.length === 1)
+                  : route === 'profile' ? renderProfile()
+                  : renderHome();
+    if (!keepScroll) {
+      if (route !== 'onboarding') app.firstElementChild.classList.add('enter');
+      window.scrollTo(0, 0);
+    }
+    if (atLeast('6.1')) { if (stack.length > 1) tg.BackButton.show(); else tg.BackButton.hide(); }
+    if (route === 'onboarding') countUp(document.getElementById('startBalance'), START_BALANCE);
+    tick();
+  }
+  function go(route) { haptic('light'); stack.push(route); render(); }
+  function back() { if (stack.length > 1) stack.pop(); else stack = ['home']; render(); }
+  if (atLeast('6.1')) tg.BackButton.onClick(back);
+
+  app.addEventListener('click', e => {
+    const t = e.target.closest('[data-go],[data-tab],[data-action],[data-back],[data-bet]');
+    if (!t) return;
+    if (t.hasAttribute('data-back')) return back();
+    if (t.dataset.go) return go(t.dataset.go);
+    if (t.dataset.tab) {
+      if (state.tab !== t.dataset.tab) { state.tab = t.dataset.tab; haptic('select'); render(true); }
+      return;
+    }
+    if (t.dataset.bet) { haptic('light'); return toast('Карточку спора соберём следующим шагом.'); }
+    const a = t.dataset.action;
+    if (a === 'create') { haptic('medium'); toast('Экран создания спора — следующий на очереди.'); }
+    else if (a === 'start') { haptic('medium'); store.set('snv_onboarded', '1'); stack = ['home']; render(); }
+    else if (a === 'back') back();
+  });
+  app.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-bet]')) { e.preventDefault(); e.target.click(); }
+  });
+
+  /* =====================================================================
+     Мелочи: таймеры, счётчик, тост
+     ===================================================================== */
+  function tick() {
+    document.querySelectorAll('[data-deadline]').forEach(el => {
+      const left = Number(el.dataset.deadline) - Date.now();
+      el.textContent = left > 0 ? mmss(left) : 'время вышло';
+    });
+  }
+  setInterval(tick, 1000);
+
+  function countUp(el, to) {
+    if (!el || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    el.textContent = '0';
+    setTimeout(() => {
+      const t0 = performance.now(), dur = 900;
+      const step = t => {
+        const k = Math.max(0, Math.min(1, (t - t0) / dur));
+        el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }, 350);
+  }
+
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  function toast(text) {
+    toastEl.textContent = text;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2600);
+  }
+
+  /* =====================================================================
+     Старт: первый запуск — приветствие, дальше — сразу главная
+     ===================================================================== */
+  const hash = location.hash.replace('#', '');
+  if (hash === 'profile' || hash === 'onboarding') stack = ['home', hash];
+  else if (hash === 'home' || store.get('snv_onboarded')) stack = ['home'];
+  else stack = ['onboarding'];
+  render();
+})();
 </script>
 </body>
 </html>
